@@ -1,7 +1,7 @@
 In this game you play as a tank. Your mission is to destroy all enemies.
 
 To move your tank use **WASD** and to aim use your **mouse**.
-To shoot press **left click**.
+To shoot press **left click**.<br>
 **WARNING**: You die in hit.
 
 
