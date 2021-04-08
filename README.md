@@ -1,4 +1,4 @@
-In this game you play as a tank. Your mission is to destroy all enemies.
+In this game you play as a tank. Your mission is to get to end of the level.
 
 To move your tank use **WASD** and to aim use your **mouse**.
 To shoot press **left click**.<br>
