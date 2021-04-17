@@ -69,6 +69,8 @@ public class SoundClip {
         }
     }
 
+    // Hello
+
     /*
      * Close a sound clip.
      */
