@@ -40,6 +40,12 @@ public class Image {
         return alpha;
     }
 
+    /*
+    * The stadnard public constructor
+    * Parametrs:
+    * pixels - the array of pixels
+    * width - the width of the image file
+    * height - the height of the image file*/
     public Image(int[] p, int w, int h){
         this.pixels = p;
         this.width = w;
@@ -49,6 +55,8 @@ public class Image {
     /*
      * Constructs an image file object.
      * This public constructor is used for get from image array of pixels for further rendering
+     * Parametrs:
+     * path - the current path of the image file
      * */
     public Image(String path) throws IOException {
         javafx.scene.image.Image image = new javafx.scene.image.Image(new File(path).toURI().toString());
@@ -75,6 +83,13 @@ public class Image {
         }
     }
 
+    /*
+    * The standard public constructor
+    * Parametrs:
+    * path - the current path of the image file
+    * i -
+    * i1 -
+    * */
     public Image(String path, int i, int i1) {
     }
 
