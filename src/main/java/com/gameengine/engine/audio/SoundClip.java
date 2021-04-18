@@ -15,7 +15,12 @@ public class SoundClip {
     private Clip clip = null; // Any sound in a game
     private FloatControl gainControl; // Controller of volume
 
-    // Set up a audio and creating audio format.
+    /*
+     * Constructs an sound file object.
+     * This public constructor is used for create a sound clip
+     * Parametrs:
+     * path - the current path of the sound clip file
+     * */
     public SoundClip(String path){
         try {
             InputStream audioSrc = SoundClip.class.getResourceAsStream(path);
