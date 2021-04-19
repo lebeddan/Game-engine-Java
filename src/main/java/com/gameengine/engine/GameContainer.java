@@ -1,5 +1,6 @@
 package com.gameengine.engine;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 
 /*
@@ -22,6 +23,10 @@ public class GameContainer implements Runnable{
     private int width = 320, height = 240;
     private float scale = 1f;
     private String title = "TestEngine";
+
+    private final long[] frameTimes = new long[100];
+    private int frameTimeIndex = 0 ;
+    private boolean arrayFilled = false ;
 
     // javaFX components
     private Canvas gameCanvas;
@@ -54,30 +59,37 @@ public class GameContainer implements Runnable{
 
     /**
      * The main game loop that calls the main function
-     * every X seconds specified in the GameLoopTimer
+     * every X seconds.
      */
     public void run(){
+
+
         // Initialize the game(make ready all elements)
         game.init(this);
         GameContainer gc = this;
+        final long startNanoTime = System.nanoTime();
+        final Long[] lastNanoTime = {System.nanoTime()};
 
         // The main game loop timer. Calls the function Tick() every X seconds.
-        GameLoopTimer timer = new GameLoopTimer() {
-            @Override
-            public void tick(float secondsSinceLastFrame) {
-                // Update the state of the game
-                game.update(gc, (float)secondsSinceLastFrame);
+        new AnimationTimer()
+        {
+            public void handle(long currentNanoTime)
+            {
+                double elapsedTime = (currentNanoTime - lastNanoTime[0]) / 1000000000.0;
+                lastNanoTime[0] = currentNanoTime;
+
+                game.update(gc, (float)elapsedTime);
                 input.update();
                 //Draw updated version onto screen.
                 renderer.clear();
                 game.render(gc, renderer);
-//                renderer.setCamX(0);
-//                renderer.setCamY(0);
-//                renderer.drawText("FPS IS: " + secondsSinceLastFrame, 0, 0, 0xffff0000);
+                renderer.setCamX(0);
+                renderer.setCamY(0);
+//                renderer.drawText("FPS IS: " + frames, 0, 0, 0xffff0000);
                 window.update();
             }
-        };
-        timer.start();
+        }.start();
+
     }
 
     /**
