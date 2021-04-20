@@ -14,10 +14,9 @@ public class ImageTile extends Image{
     /*
      * Constructs an image tile object.
      * This public constructor is used for set height and weight image tile for further rendering
-     * Parametrs:
-     * path - the current path of the image file
-     * tilwW- the width of the image tile
-     * tilwH- the height of the image tile
+     * @param path - the current path of the image file
+     * @param tilwW- the width of the image tile
+     * @param tilwH- the height of the image tile
      * */
     public ImageTile(String path, int tileW, int tileH) throws IOException {
         super(path);
@@ -45,11 +44,10 @@ public class ImageTile extends Image{
 
     /*
     * Function is used for rotate image and make a animation effect
-    * Parametrs:
-    * angle - for calculating angles and radians
-    * pixels - for store rotated pixels
-    * width - the current width of image tile
-    * height - the current height fo image tile
+    * @param angle - for calculating angles and radians
+    * @param pixels - for store rotated pixels
+    * @param width - the current width of image tile
+    * @param height - the current height fo image tile
     * @return the integer array of rotated pixels
     * */
     public static int[ ] rotate( double angle, int[ ] pixels, int width, int height ) {
