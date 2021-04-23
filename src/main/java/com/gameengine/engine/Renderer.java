@@ -4,6 +4,7 @@ package com.gameengine.engine;
 import com.gameengine.engine.gfx.*;
 import com.gameengine.engine.gfx.Font;
 import com.gameengine.engine.gfx.Image;
+import com.gameengine.game.MapObjects.Tile;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import java.util.ArrayList;
@@ -202,6 +203,46 @@ public class Renderer {
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
                 setPixel(x + offX, y + offY, image.getPixels()[x + y * image.getWidth()]);
+//                setLightBlock(x + offX, y + offY, image.getLightBlock());
+            }
+        }
+    }
+
+    /**
+     * Draws a chunk
+     * @param chunk The chunk to draw
+     * @param offX X location of upper left corner of image
+     * @param offY Y location of upper left corner of image
+     */
+    public void drawChunk(Tile chunk, int offX, int offY){
+        offX -= camX;
+        offY -= camY;
+
+//        if(image.isAlpha() && !processing){
+//            imageRequest.add(new ImageRequest(image, zDepth, offX, offY));
+//            return;
+//        }
+
+        //Don't render code
+        if(offX < -chunk.getWidth()) return;
+        if(offY < -chunk.getHeight()) return;
+        if(offX >= pixelW) return;
+        if(offY >= pixelH) return;
+
+        int newX = 0;
+        int newY = 0;
+        int newWidth = chunk.getWidth();
+        int newHeight = chunk.getHeight();
+
+        // Clipping code
+        if (offX < 0){ newX -= newX; }
+        if (offY < 0){ newY -= newY; }
+        if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
+        if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+
+        for(int y = newY; y < newHeight; y++){
+            for(int x = newX; x < newWidth; x++){
+                setPixel(x + offX, y + offY, chunk.getPixels()[x + y * chunk.getWidth()]);
 //                setLightBlock(x + offX, y + offY, image.getLightBlock());
             }
         }
