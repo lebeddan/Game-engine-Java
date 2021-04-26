@@ -54,8 +54,9 @@ public class TiledMap {
         try {
             Reader reader = new FileReader(path);
             tile = gson.fromJson(reader, TiledMap.class);
-            map = Map.creat_m(tile.layers.getAsJsonArray().get(0));
-//            System.out.println(map.getData());
+            map = new Map(tile.layers.getAsJsonArray().get(0));
+            map.setObjects(tile.layers.getAsJsonArray().get(0).getAsJsonObject().get("data"));
+            System.out.println(tile.layers.getAsJsonArray().get(0).getAsJsonObject().get("data"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

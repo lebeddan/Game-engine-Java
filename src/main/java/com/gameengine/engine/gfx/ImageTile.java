@@ -9,6 +9,7 @@ import java.io.IOException;
 public class ImageTile extends Image{
     // Sprite properties
     private int tileW, tileH;
+    private float scale;
     private int[] pixelsRot;
 
     /*
@@ -19,10 +20,28 @@ public class ImageTile extends Image{
      * tilwW- the width of the image tile
      * tilwH- the height of the image tile
      * */
-    public ImageTile(String path, int tileW, int tileH) throws IOException {
-        super(path);
-        this.tileW = tileW;
-        this.tileH = tileH;
+    public ImageTile(String path, int tileW, int tileH, float scale) throws IOException {
+        super(path, scale);
+        this.tileW = tileW*(int)scale;
+        this.tileH = tileH*(int)scale;
+        this.scale = scale;
+//        for (int y = tileH; y < this.tileH; y++){
+//            for(int x = tileW; x < this.tileW; x++){
+//                scaledArray[x+y*this.tileW] = pix[a+b*tileH];
+//                a++;
+//            }
+//            b++;
+//        }
+//        for (int i = 0; i < tileW/(int)scale; ++i) {
+//            for (int j = 0; j < tileH/(int)scale; ++j) {
+//                scaledArray[(i*2)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[((i*2) + 1)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[(i*2)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[((i*2) + 1)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
+//            }
+//        }
+//        this.setPixels(resizePixels(super.getPixels(), getWidth(), getHeight(), getWidth()*(int)scale, getHeight()*(int)scale));
+//        this.setPixels(scaledArray);
 //        for(int x = 0; x < tileW; x++) {
 //            for (int y = 0; y < this.getHeight(); y++) {
 //                double centerX = tileW / 2;
@@ -43,37 +62,41 @@ public class ImageTile extends Image{
 //        }
     }
 
-    /*
-    * Function is used for rotate image and make a animation effect
-    * Parametrs:
-    * angle - for calculating angles and radians
-    * pixels - for store rotated pixels
-    * width - the current width of image tile
-    * height - the current height fo image tile
-    * @return the integer array of rotated pixels
-    * */
-    public static int[ ] rotate( double angle, int[ ] pixels, int width, int height ) {
-        final double radians = Math.toRadians(angle);
-        final double cos = Math.cos(radians);
-        final double sin = Math.sin(radians);
-        final int[] pixels2 = new int[pixels.length];
-        for (int pixel = 0; pixel < pixels2.length; pixel++) {
-            pixels2[pixel] = 0xFFFFFF; // make all pixels white
-        }
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                final int centerx = width / 2;
-                final int centery = height / 2;
-                final int m = x - centerx;
-                final int n = y - centery;
-                final int j = ((int) (m * cos + n * sin)) + centerx;
-                final int k = ((int) (n * cos - m * sin)) + centery;
-                if (j >= 0 && j < width && k >= 0 && k < height) {
-                    pixels2[(y * width + x)] = pixels[(k * width + j)];
-                }
-            }
-        }
-        return pixels2;
+    public ImageTile(String path, int tileW, int tileH) throws IOException {
+        super(path);
+        this.tileW = tileW;
+        this.tileH = tileH;
+        this.scale = scale;
+        int[] pix = this.getPixels();
+        int[] scaledArray = new int[tileW*tileH];
+//        for (int i = 0; i < tileW/(int)scale; ++i) {
+//            for (int j = 0; j < tileH/(int)scale; ++j) {
+//                scaledArray[(i*2)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[((i*2) + 1)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[(i*2)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
+//                scaledArray[((i*2) + 1)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
+//            }
+//        }
+//        this.setPixels(resizePixels(super.getPixels(), getWidth(), getHeight(), getWidth()*(int)scale, getHeight()*(int)scale));
+//        this.setPixels(scaledArray);
+//        for(int x = 0; x < tileW; x++) {
+//            for (int y = 0; y < this.getHeight(); y++) {
+//                double centerX = tileW / 2;
+//                double centerY = this.getHeight() / 2;
+//
+//                double dx = (double) (x - centerX);
+//                double dy = (double) (y - centerY);
+//
+//                double finX = Math.cos(Math.toRadians(90)) * dx - Math.sin(Math.toRadians(90)) * dy + centerX;
+//                double finY = Math.cos(Math.toRadians(90)) * dy + Math.sin(Math.toRadians(90)) * dx + centerY;
+//
+//                finX = Math.round(finX);
+//                finY = Math.round(finY);
+//
+////                System.out.println(" " + (Math.sin(Math.toRadians(30)) * dx + centerY));
+//                pixelsRot[x + y * this.getWidth()] = this.getPixels()[(int) (finX + finY * tileW)];
+//            }
+//        }
     }
 
     /*

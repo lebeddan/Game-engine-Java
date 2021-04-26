@@ -4,7 +4,7 @@ package com.gameengine.engine;
 import com.gameengine.engine.gfx.*;
 import com.gameengine.engine.gfx.Font;
 import com.gameengine.engine.gfx.Image;
-import com.gameengine.game.MapObjects.Tile;
+import com.gameengine.game.MapObjects.Chunk;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import java.util.ArrayList;
@@ -214,7 +214,7 @@ public class Renderer {
      * @param offX X location of upper left corner of image
      * @param offY Y location of upper left corner of image
      */
-    public void drawChunk(Tile chunk, int offX, int offY){
+    public void drawChunk(Chunk chunk, int offX, int offY){
         offX -= camX;
         offY -= camY;
 
@@ -350,6 +350,7 @@ public class Renderer {
                 if(direction == 1) {
                     setPixel(x + offX, y + offY, image.getPixelsFlip()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getWidth()]);
                 } else {
+                    System.out.println(image.getTileW());
                     setPixel(x + offX, y + offY, image.getPixels()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getWidth()]);
                 }
             }

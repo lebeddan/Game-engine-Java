@@ -66,10 +66,10 @@ public class Image {
         pixels = new int[width * height];
         pixelsFlip = new int[width * height];
 
-        System.out.println(width +" " + height);
+//        System.out.println(width +" " + height);
         PixelReader pr = image.getPixelReader();
         double radian = Math.toRadians(30);
-        System.out.println("Pixel format: " + pr.getPixelFormat());
+//        System.out.println("Pixel format: " + pr.getPixelFormat());
         for(int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
                 pixels[x + y * width] = pr.getArgb(x, y);
@@ -81,6 +81,46 @@ public class Image {
         for(int i =0 ; i < pixelsFlip.length; i++){
             pixelsFlip[i] = pixels[i - 2 * (i % width) + width - 1];
         }
+//        pixels = resizePixels(pixels, width, height, width*2, height*2);
+    }
+
+    public Image(String path, float scale) throws IOException {
+        javafx.scene.image.Image image = new javafx.scene.image.Image(new File(path).toURI().toString());
+
+        width = (int)image.getWidth()*(int)scale;
+        height = (int)image.getHeight()*(int)scale;
+        pixels = new int[width*height];
+        int[] spixels = new int[width * height];
+        pixelsFlip = new int[width * height];
+
+//        System.out.println(width +" " + height);
+        PixelReader pr = image.getPixelReader();
+        double radian = Math.toRadians(30);
+//        System.out.println("Pixel format: " + pr.getPixelFormat());
+        for(int x = 0; x < width/(int)scale; x++){
+            for(int y = 0; y < height/(int)scale; y++){
+                spixels[x + y * width] = pr.getArgb(x, y);
+            }
+        }
+        for(int i =0 ; i < pixelsFlip.length; i++){
+            pixelsFlip[i] = pixels[i - 2 * (i % width) + width - 1];
+        }
+        pixels = resizePixels(spixels, width, height, scale);
+    }
+
+    public int[] resizePixels(int[] pixels,int w1,int h1, float scale) {
+        int[] temp = new int[w1*h1*(int)(scale*scale)] ;
+
+        int trg = 0;
+        for(int i = 0; i < h1; i++) {
+            float iUnscaled = i / scale;
+            for(int j = 0; j < w1; j++){
+                float jUnscaled = j / scale;
+                temp[trg++] = pixels[(int)iUnscaled*w1 + (int)jUnscaled];
+            }
+        }
+
+        return temp ;
     }
 
     /*
