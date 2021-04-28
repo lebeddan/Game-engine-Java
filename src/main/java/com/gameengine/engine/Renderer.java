@@ -350,7 +350,6 @@ public class Renderer {
                 if(direction == 1) {
                     setPixel(x + offX, y + offY, image.getPixelsFlip()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getWidth()]);
                 } else {
-                    System.out.println(image.getTileW());
                     setPixel(x + offX, y + offY, image.getPixels()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getWidth()]);
                 }
             }
