@@ -224,10 +224,22 @@ public class Renderer {
 //        }
 
         //Don't render code
-        if(offX < -chunk.getWidth()) return;
-        if(offY < -chunk.getHeight()) return;
-        if(offX >= pixelW) return;
-        if(offY >= pixelH) return;
+        if(offX < -chunk.getWidth()){
+//            System.out.println("Not drawing chunk: " + chunk.getNumber());
+            return;
+        }
+        if(offY < -chunk.getHeight()){
+//            System.out.println("Not drawing chunk: " + chunk.getNumber());
+            return;
+        }
+        if(offX >= pixelW){
+            return;
+        }
+        if(offY >= pixelH){
+            return;
+        }
+//        System.out.println(offY + " " + camY);
+
 
         int newX = 0;
         int newY = 0;
@@ -235,10 +247,21 @@ public class Renderer {
         int newHeight = chunk.getHeight();
 
         // Clipping code
-        if (offX < 0){ newX -= newX; }
-        if (offY < 0){ newY -= newY; }
+        // TODO: OPTIMIZE the upper boundary of the drawing.
+        //  Currently adds to array even the parts that arent seen.
+        if (offX < 0){
+//            System.out.println("here");
+            newX = camX%pixelW;}
+        if (offY < 0){ newY = newY; }
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+
+//        int rendX = camX;
+//        int rendY = camY - chunk.getPosY();
+//        int rendFinX = chunk.getWidth() + chunk.getPosX();
+//        int rendFinY = chunk.getHeight() + chunk.getPosY();
+
+
 
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
@@ -246,6 +269,9 @@ public class Renderer {
 //                setLightBlock(x + offX, y + offY, image.getLightBlock());
             }
         }
+//        System.out.println("Here: " + newY + " " + newHeight + " " + chunk.getNumber());
+//        System.out.println("PosY " + camY);
+        // TODO: Reduce rendering on Y axis.
     }
 
     /**
@@ -413,6 +439,50 @@ public class Renderer {
                 setPixel(x+offX, y+offY, color);
             }
         }
+    }
+
+    public void drawFillCirc(int offX, int offY, int radius, int color){
+        offX -= camX;
+        offY -= camY;
+
+//        Don't render code
+        if(offX < -radius) return;
+        if(offY < -radius) return;
+        if(offX >= pixelW) return;
+        if(offY >= pixelH) return;
+
+        int newX = 0;
+        int newY = 0;
+        int newWidth = radius;
+        int newHeight = radius;
+
+//         Clipping code
+        if (offX < 0){ newX -= newX; }
+        if (offY < 0){ newY -= newY; }
+        if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
+        if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+
+//        int x = 0;
+//        int y = 0;
+//        for(int theta = 0; theta < 360; theta += 15){
+//            x = (int) (offX + radius*Math.cos(Math.toRadians(theta)));
+//            y = (int) (offY + radius*Math.sin(Math.toRadians(theta)));
+//            setPixel(x, y, color);
+//        }
+
+        for (int x = -radius; x < radius ; x++)
+        {
+            int height = (int)Math.sqrt(radius * radius - x * x);
+
+            for (int y = -height; y < height; y++)
+                setPixel(x + offX, y + offY, color);
+        }
+
+//        for(int y = 0; y < height; y++){
+//            for(int x = 0; x < width; x++){
+//                setPixel(x+offX, y+offY, color);
+//            }
+//        }
     }
 
     /**

@@ -67,8 +67,6 @@ public class ImageTile extends Image{
         this.tileW = tileW;
         this.tileH = tileH;
         this.scale = scale;
-        int[] pix = this.getPixels();
-        int[] scaledArray = new int[tileW*tileH];
 //        for (int i = 0; i < tileW/(int)scale; ++i) {
 //            for (int j = 0; j < tileH/(int)scale; ++j) {
 //                scaledArray[(i*2)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];

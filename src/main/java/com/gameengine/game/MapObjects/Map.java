@@ -1,11 +1,14 @@
 package com.gameengine.game.MapObjects;
 
+import com.gameengine.engine.gfx.ImageTile;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Map {
@@ -20,12 +23,21 @@ public class Map {
     private int x;
     private int y;
 
-    private ArrayList<Chunk> chunks;
-    private List<Integer> objects;
-
     private int chunk_width = 10;
     private int chunk_height = 6;
     private int tile_size = 128;
+
+    private ArrayList<Chunk> chunks;
+    private List<Integer> objects;
+    private ImageTile tileSet;
+
+    {
+        try {
+            tileSet = new ImageTile("src/Resources/Tile/grass.png", 32, 32,tile_size/32);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     Type listType = new TypeToken<List<Integer>>() {}.getType();
 
@@ -63,18 +75,23 @@ public class Map {
         System.out.println("CHunk filled called");
         int cTileX = width/chunk_width;
         int cTileY = height/chunk_height;
-        for(int i =0; i < (width*height)/(chunk_width*chunk_height); i++){
-            int[] chunk_tiles = new int[chunk_width*chunk_height];
-            int[] chunk_objects = new int[chunk_width*chunk_height];
-            for (int y = 0; y < chunk_height; y++){
-                for(int x =0; x < chunk_width; x++){
-                    chunk_tiles[x+y*chunk_width]=data.get((x+(i%chunk_width))+(y+(i%chunk_height))*width);
-                    chunk_objects[x+y*chunk_width]=objects.get((x+(i%chunk_width))+(y+(i%chunk_height))*width);
+        int[] chunk_tiles = new int[chunk_width * chunk_height];
+        int[] chunk_objects = new int[chunk_width * chunk_height];
+        int num = 0;
+
+        for(int ay = 0; ay < height; ay += chunk_height){
+            for(int ax = 0; ax < width; ax += chunk_width){
+                //
+                for(int y = 0; y < chunk_height; y++){
+                    for(int x = 0; x < chunk_width; x++){
+                        chunk_tiles[x + y*chunk_width] = data.get((x+ax) + (ay+y)*width);
+                        chunk_objects[x + y*chunk_width] = objects.get((x+ax) + (ay+y)*width);
+                    }
                 }
+                Chunk t = new Chunk(chunk_width * tile_size, chunk_height * tile_size, chunk_tiles, chunk_objects, num, this, tileSet);
+                chunks.add(t);
+                num++;
             }
-            System.out.println(i);
-            Chunk t = new Chunk(chunk_width*tile_size,chunk_height*tile_size, chunk_tiles, chunk_objects, i, width/chunk_width);
-            chunks.add(t);
         }
     }
 
@@ -83,7 +100,7 @@ public class Map {
     }
 
     public int getChunk_height() {
-        return width/chunk_height;
+        return height/chunk_height;
     }
 
     public int getLevel_width(){
@@ -98,11 +115,15 @@ public class Map {
         return chunks.get(chunk_num);
     }
 
-    private int get_cWidth(){
+    public int getTile_size(){
+        return tile_size;
+    }
+
+    public int get_cWidth(){
         return chunk_width;
     }
 
-    private int get_cHeight(){
+    public int get_cHeight(){
         return chunk_height;
     }
 

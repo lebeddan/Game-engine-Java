@@ -105,22 +105,18 @@ public class Image {
         for(int i =0 ; i < pixelsFlip.length; i++){
             pixelsFlip[i] = pixels[i - 2 * (i % width) + width - 1];
         }
-        pixels = resizePixels(spixels, width, height, scale);
+        resizePixels(spixels, pixels, width, height, scale);
     }
 
-    public int[] resizePixels(int[] pixels,int w1,int h1, float scale) {
-        int[] temp = new int[w1*h1*(int)(scale*scale)] ;
-
+    public void resizePixels(int[] spixels, int[] pixels, int w1,int h1, float scale) {
         int trg = 0;
         for(int i = 0; i < h1; i++) {
             float iUnscaled = i / scale;
             for(int j = 0; j < w1; j++){
                 float jUnscaled = j / scale;
-                temp[trg++] = pixels[(int)iUnscaled*w1 + (int)jUnscaled];
+                pixels[trg++] = spixels[(int)iUnscaled*w1 + (int)jUnscaled];
             }
         }
-
-        return temp ;
     }
 
     /*
