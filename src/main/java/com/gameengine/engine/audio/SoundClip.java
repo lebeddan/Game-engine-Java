@@ -18,8 +18,7 @@ public class SoundClip {
     /*
      * Constructs an sound file object.
      * This public constructor is used for create a sound clip
-     * Parametrs:
-     * path - the current path of the sound clip file
+     * @param path - the current path of the sound clip file
      * */
     public SoundClip(String path){
         try {
@@ -73,8 +72,6 @@ public class SoundClip {
             clip.stop();
         }
     }
-
-    // Hello
 
     /*
      * Close a sound clip.

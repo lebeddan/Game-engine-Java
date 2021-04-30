@@ -15,10 +15,9 @@ public class ImageTile extends Image{
     /*
      * Constructs an image tile object.
      * This public constructor is used for set height and weight image tile for further rendering
-     * Parametrs:
-     * path - the current path of the image file
-     * tilwW- the width of the image tile
-     * tilwH- the height of the image tile
+     * @param path - the current path of the image file
+     * @param tilwW- the width of the image tile
+     * @param tilwH- the height of the image tile
      * */
     public ImageTile(String path, int tileW, int tileH, float scale) throws IOException {
         super(path, scale);
@@ -95,6 +94,38 @@ public class ImageTile extends Image{
 //                pixelsRot[x + y * this.getWidth()] = this.getPixels()[(int) (finX + finY * tileW)];
 //            }
 //        }
+    }
+
+    /*
+    * Function is used for rotate image and make a animation effect
+    * @param angle - for calculating angles and radians
+    * @param pixels - for store rotated pixels
+    * @param width - the current width of image tile
+    * @param height - the current height fo image tile
+    * @return the integer array of rotated pixels
+    * */
+    public static int[ ] rotate( double angle, int[ ] pixels, int width, int height ) {
+        final double radians = Math.toRadians(angle);
+        final double cos = Math.cos(radians);
+        final double sin = Math.sin(radians);
+        final int[] pixels2 = new int[pixels.length];
+        for (int pixel = 0; pixel < pixels2.length; pixel++) {
+            pixels2[pixel] = 0xFFFFFF; // make all pixels white
+        }
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final int centerx = width / 2;
+                final int centery = height / 2;
+                final int m = x - centerx;
+                final int n = y - centery;
+                final int j = ((int) (m * cos + n * sin)) + centerx;
+                final int k = ((int) (n * cos - m * sin)) + centery;
+                if (j >= 0 && j < width && k >= 0 && k < height) {
+                    pixels2[(y * width + x)] = pixels[(k * width + j)];
+                }
+            }
+        }
+        return pixels2;
     }
 
     /*
