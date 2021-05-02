@@ -1,9 +1,16 @@
 package com.gameengine.engine.game;
 /*
+<<<<<<< HEAD
  * The abstract class which describes
  * the behavior of game objects in the game.
  * @author Lebedev Daniil
  * */
+=======
+* The abstract class which describes
+* the behavior of game objects in the game.
+* @author Lebedev Daniil
+* */
+>>>>>>> Danila-Master
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
 
@@ -15,6 +22,7 @@ public abstract class GameObject {
     protected boolean dead = false;
 
     /*
+<<<<<<< HEAD
      * Abstract function to update the game object.
      * @param gc - the game container
      * @param gm - the game manager
@@ -27,6 +35,20 @@ public abstract class GameObject {
      * @param gc - the game container to now for example, how biggest the screen
      * @param r - the renderer for use renderer functions
      * */
+=======
+    * Abstract function to update the game object.
+    * @param gc - the game container
+    * @param gm - the game manager
+    * @param dt - the delta time between frames
+    * */
+    public abstract void update(GameContainer gc, GameManager gm, float dt);
+
+    /*
+    * Abstract function to render the game object.
+    * @param gc - the game container to now for example, how biggest the screen
+    * @param r - the renderer for use renderer functions
+    * */
+>>>>>>> Danila-Master
     public abstract void render(GameContainer gc, Renderer r);
 
     /*
