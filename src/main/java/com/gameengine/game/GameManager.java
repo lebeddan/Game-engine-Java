@@ -24,9 +24,6 @@ public class GameManager extends AbstractGame {
     public static final int TS = 128;
     private static Canvas mainCanvas;
 
-    private Image skyImage = new Image("C:\\Users\\Vasily\\IdeaProjects\\TestEngine\\src\\Resources\\sky.png");
-    private Image tileImage = new Image("C:\\Users\\Vasily\\IdeaProjects\\TestEngine\\src\\Resources\\bgcolor.png");
-
     private boolean[] collision;
     private int levelW, levelH, levelWChunks, chunk_width, chunk_height;
 
@@ -40,11 +37,7 @@ public class GameManager extends AbstractGame {
     public GameManager() throws IOException {
         objects.add(new Tank(5, 5));
         camera = new Camera("player");
-        map = TiledMap.create_map("src/Resources/Maps/loadtest.json");
-        loaded_chunks = new ArrayList<Chunk>();
-        loaded_chunks.add(map.get_chunk(0));
-        cur_chunk = -1;
-        loadLevel("src/test/resources/bw.png");
+        loadLevel("src/Resources/Maps/loadtest.json");
     }
 
     @Override
@@ -69,12 +62,15 @@ public class GameManager extends AbstractGame {
 
     // TODO: Make a class that loads a level
     public void loadLevel(String path) throws IOException {
+        map = TiledMap.create_map(path);
+        loaded_chunks = new ArrayList<Chunk>();
+        loaded_chunks.add(map.get_chunk(0));
+        cur_chunk = -1;
         levelW = map.getLevel_width();
         levelH = map.getLevel_height();
         levelWChunks = map.getChunk_width();
         chunk_width = map.get_cWidth()*TS;
         chunk_height = map.get_cHeight()*TS;
-        collision = new boolean[map.get_cWidth()*map.get_cHeight()*9*TS*TS];
     }
 
     @Override
