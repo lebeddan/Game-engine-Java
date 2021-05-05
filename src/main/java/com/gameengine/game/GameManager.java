@@ -11,6 +11,7 @@ import com.gameengine.game.GameObjects.world.Tree;
 import com.gameengine.game.MapObjects.Chunk;
 import com.gameengine.game.MapObjects.Map;
 import com.gameengine.game.MapObjects.TiledMap;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 
@@ -37,9 +38,9 @@ public class GameManager extends AbstractGame {
     private int cur_chunk;
 
     public GameManager() throws IOException {
-        objects.add(new Tank(2, 2));
+        objects.add(new Tank(5, 5));
         camera = new Camera("player");
-        map = TiledMap.create_map("src/Resources/Maps/vasmapbigcool.json");
+        map = TiledMap.create_map("src/Resources/Maps/loadtest.json");
         loaded_chunks = new ArrayList<Chunk>();
         loaded_chunks.add(map.get_chunk(0));
         cur_chunk = -1;
@@ -112,6 +113,9 @@ public class GameManager extends AbstractGame {
                 i--;
             }
         }
+        for(Chunk chunk : loaded_chunks){
+            chunk.getObjects().removeIf(GameObject::isDead);
+        }
         camera.update(gc, this, deltaTime);
     }
 
@@ -181,6 +185,59 @@ public class GameManager extends AbstractGame {
         return null;
     }
 
+    public void check_collisions(GameObject mainObj){
+        String mainType = mainObj.getShape();
+        for(Chunk chunk : loaded_chunks) {
+            for (GameObject obj : chunk.getObjects()){
+                if(obj.getShape().equals("square")) {
+                    int centerX = (int) ( mainObj.getPosX() + mainObj.getRadius());
+                    int centerY = (int) (mainObj.getPosY() + mainObj.getRadius());
+                    Point2D center = Point2D.ZERO.add(mainObj.getPosX()+ mainObj.getRadius(), mainObj.getPosY()+ mainObj.getRadius());
+                    int sqHalfX = obj.getWidth()/2;
+                    int sqHalfY = obj.getHeight()/2;
+
+                    Point2D aabb = Point2D.ZERO.add(sqHalfX+obj.getPosX(), sqHalfY+obj.getPosY());
+
+                    int diffX = (int) (center.getX() - aabb.getX());
+                    int diffY = (int) (center.getY() - aabb.getY());
+
+                    int diffClampX = clamp(diffX, -sqHalfX, sqHalfX);
+                    int diffClampY = clamp(diffY, -sqHalfY, sqHalfY);
+
+//                    int closeX = sqHalfX + diffClampX;
+//                    int closeY = sqHalfY + diffClampY;
+                    Point2D closest = Point2D.ZERO.add(aabb.getX() + diffClampX, aabb.getY() + diffClampY);
+
+                    if(closest.distance(center) < 300) {
+                        System.out.println(mainObj.getRadius());
+                    }
+                    if(closest.distance(center) < mainObj.getRadius()){
+                        System.out.println("Nice");
+                        obj.hit(mainObj);
+                        mainObj.hit(obj);
+                    }
+                } else if (obj.getShape().equals("circle")){
+                    Point2D mainCent = Point2D.ZERO.add(mainObj.getPosX()+mainObj.getCenter().getX(), mainObj.getPosY()+mainObj.getCenter().getY());
+                    Point2D objCent = Point2D.ZERO.add(obj.getPosX()+obj.getCenter().getX(), obj.getPosY()+obj.getCenter().getY());
+                    if(mainCent.distance(objCent) < (mainObj.getRadius()+obj.getRadius())){
+                        obj.hit(mainObj);
+                        mainObj.hit(obj);
+                    }
+                } else if (obj.getShape().equals("someShape")){
+                    boolean collisionX = (mainObj.getPosX() + mainObj.getWidth() >= obj.getPosX()) && (obj.getPosX() + obj.getWidth() >= mainObj.getPosX());
+                    boolean collisionY = (mainObj.getPosY() + mainObj.getHeight() >= obj.getPosY()) && (obj.getPosY() + obj.getHeight() >= mainObj.getPosY());
+
+                    if (collisionX && collisionY) {
+                        System.out.println("Nice");
+//                        mainObj.dead = true;
+                        mainObj.hit(obj);
+                        obj.hit(mainObj);
+                    }
+                }
+            }
+        }
+    }
+
     public int getLevelW() {
         return levelW;
     }
@@ -192,5 +249,9 @@ public class GameManager extends AbstractGame {
     public static void printObjectSize(Object object) {
         System.out.println("Object type: " + object.getClass() +
                 ", size: " + InstrumentationAgent.getObjectSize(object) + " bytes");
+    }
+
+    public int clamp(int value, int min, int max){
+        return  Math.max(min, Math.min(max, value));
     }
 }

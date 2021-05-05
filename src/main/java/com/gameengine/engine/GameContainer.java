@@ -92,18 +92,21 @@ public class GameContainer implements Runnable{
                 if (arrayFilled[0]) {
                     long elapsedNanos = currentNanoTime - oldFrameTime ;
                     elapsedNanosPerFrame = elapsedNanos / frameTimes.length ;
-                    frameRate = 1_000_000_000.0 / elapsedNanosPerFrame ;
+                    frameRate = NINE_BIL / elapsedNanosPerFrame ;
 //                    System.out.println("Framerate: " + frameRate);
                 }
-                game.update(gc, (float)(elapsedNanosPerFrame/NINE_BIL));
-                input.update();
-                //Draw updated version onto screen.
-                renderer.clear();
-                game.render(gc, renderer);
-                renderer.setCamX(0);
-                renderer.setCamY(0);
-                renderer.drawText("FPS IS: " + frameRate, 0, 0, 0xffff0000);
-                window.update();
+                if(frameRate > 70){
+                    elapsedNanosPerFrame = (long) (NINE_BIL/70);
+                }
+                    game.update(gc, (float)(elapsedNanosPerFrame/NINE_BIL));
+                    input.update();
+                    //Draw updated version onto screen.
+                    renderer.clear();
+                    game.render(gc, renderer);
+                    renderer.setCamX(0);
+                    renderer.setCamY(0);
+                    renderer.drawText("FPS IS: " + frameRate, 0, 0, 0xffff0000);
+                    window.update();
             }
         }.start();
 
