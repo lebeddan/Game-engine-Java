@@ -293,10 +293,7 @@ public class Renderer {
             imageRequest.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offX, offY));
             return;
         }
-        setPixel(offX, offY, 0xffff0000);
-        setPixel(offX+1, offY+1, 0xffff0000);
-        setPixel(offX+1, offY, 0xffff0000);
-        setPixel(offX, offY+1, 0xffff0000);
+
 
         //Don't render code
         if(offX < -image.getTileW()) return;
@@ -309,22 +306,35 @@ public class Renderer {
         final double sin = Math.sin(radians);
         final int centerx = (int) axis.getX();
         final int centery = (int) axis.getY();
+        setPixel(centerx, centery, 0xff0000ff);
+        setPixel(centerx+1, centery+1, 0xff0000ff);
+        setPixel(centerx+1, centery, 0xff0000ff);
+        setPixel(centerx, centery+1, 0xff0000ff);
 
-        int newX = -image.getTileH();
-        int newY = -image.getTileH();
-        int newWidth = image.getTileW() + centery;
-        int newHeight = image.getTileH() + centery;
+        int newWidth = Math.max(image.getTileW(), image.getTileH()) + Math.max(image.getTileW()/2, image.getTileH()/2);
+//        int newHeight = Math.max(image.getTileW(), image.getTileH()) + image.getTileH()/2;
+        int newHeight = newWidth;
+
+//        int newWidth = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
+//        int newHeight = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
+
+        int newX = centerx - Math.max(newWidth, newHeight)/2;
+        int newY = centery - Math.max(newWidth, newHeight)/2;
+
+
+//        drawRect(newX+offX, newY + offY, newWidth, newHeight, 0xff000000);
 
         // Clipping code
         if (offX < 0){ newX -= newX; }
         if (offY < 0){ newY -= newY; }
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+//        newX = newX-60;
 
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
-                final int m = x - centerx - centerx/2;
-                final int n = y - centery - centery/2;
+                final int m = x - centerx;
+                final int n = y - centery;
                 final int j = ((int) (m * cos + n * sin)) + centerx;
                 final int k = ((int) (n * cos - m * sin)) + centery;
                 if (j >= 0 && j < image.getTileW() && k >= 0 && k < image.getTileH()) {
