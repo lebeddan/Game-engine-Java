@@ -4,6 +4,7 @@ package com.gameengine.engine;
 import com.gameengine.engine.gfx.*;
 import com.gameengine.engine.gfx.Font;
 import com.gameengine.engine.gfx.Image;
+import com.gameengine.game.MapObjects.Chunk;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import java.util.ArrayList;
@@ -208,6 +209,72 @@ public class Renderer {
     }
 
     /**
+     * Draws a chunk
+     * @param chunk The chunk to draw
+     * @param offX X location of upper left corner of image
+     * @param offY Y location of upper left corner of image
+     */
+    public void drawChunk(Chunk chunk, int offX, int offY){
+        offX -= camX;
+        offY -= camY;
+
+//        if(image.isAlpha() && !processing){
+//            imageRequest.add(new ImageRequest(image, zDepth, offX, offY));
+//            return;
+//        }
+
+        //Don't render code
+        if(offX < -chunk.getWidth()){
+//            System.out.println("Not drawing chunk: " + chunk.getNumber());
+            return;
+        }
+        if(offY < -chunk.getHeight()){
+//            System.out.println("Not drawing chunk: " + chunk.getNumber());
+            return;
+        }
+        if(offX >= pixelW){
+            return;
+        }
+        if(offY >= pixelH){
+            return;
+        }
+//        System.out.println(offY + " " + camY);
+
+
+        int newX = 0;
+        int newY = 0;
+        int newWidth = chunk.getWidth();
+        int newHeight = chunk.getHeight();
+
+        // Clipping code
+        // TODO: OPTIMIZE the upper boundary of the drawing.
+        //  Currently adds to array even the parts that arent seen.
+        if (offX < 0){
+//            System.out.println("here");
+            newX = camX%pixelW;}
+        if (offY < 0){ newY = newY; }
+        if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
+        if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+
+//        int rendX = camX;
+//        int rendY = camY - chunk.getPosY();
+//        int rendFinX = chunk.getWidth() + chunk.getPosX();
+//        int rendFinY = chunk.getHeight() + chunk.getPosY();
+
+
+
+        for(int y = newY; y < newHeight; y++){
+            for(int x = newX; x < newWidth; x++){
+                setPixel(x + offX, y + offY, chunk.getPixels()[x + y * chunk.getWidth()]);
+//                setLightBlock(x + offX, y + offY, image.getLightBlock());
+            }
+        }
+//        System.out.println("Here: " + newY + " " + newHeight + " " + chunk.getNumber());
+//        System.out.println("PosY " + camY);
+        // TODO: Reduce rendering on Y axis.
+    }
+
+    /**
      * Draws a tile from a bigger sprite sheet
      * Supports animation and rotation
      * @param image The image to draw
@@ -226,10 +293,7 @@ public class Renderer {
             imageRequest.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offX, offY));
             return;
         }
-        setPixel(offX, offY, 0xffff0000);
-        setPixel(offX+1, offY+1, 0xffff0000);
-        setPixel(offX+1, offY, 0xffff0000);
-        setPixel(offX, offY+1, 0xffff0000);
+
 
         //Don't render code
         if(offX < -image.getTileW()) return;
@@ -242,22 +306,35 @@ public class Renderer {
         final double sin = Math.sin(radians);
         final int centerx = (int) axis.getX();
         final int centery = (int) axis.getY();
+        setPixel(centerx, centery, 0xff0000ff);
+        setPixel(centerx+1, centery+1, 0xff0000ff);
+        setPixel(centerx+1, centery, 0xff0000ff);
+        setPixel(centerx, centery+1, 0xff0000ff);
 
-        int newX = -image.getTileH();
-        int newY = -image.getTileH();
-        int newWidth = image.getTileW() + centery;
-        int newHeight = image.getTileH() + centery;
+        int newWidth = Math.max(image.getTileW(), image.getTileH()) + Math.max(image.getTileW()/2, image.getTileH()/2);
+//        int newHeight = Math.max(image.getTileW(), image.getTileH()) + image.getTileH()/2;
+        int newHeight = newWidth;
+
+//        int newWidth = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
+//        int newHeight = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
+
+        int newX = centerx - Math.max(newWidth, newHeight)/2;
+        int newY = centery - Math.max(newWidth, newHeight)/2;
+
+
+//        drawRect(newX+offX, newY + offY, newWidth, newHeight, 0xff000000);
 
         // Clipping code
         if (offX < 0){ newX -= newX; }
         if (offY < 0){ newY -= newY; }
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+//        newX = newX-60;
 
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
-                final int m = x - centerx - centerx/2;
-                final int n = y - centery - centery/2;
+                final int m = x - centerx;
+                final int n = y - centery;
                 final int j = ((int) (m * cos + n * sin)) + centerx;
                 final int k = ((int) (n * cos - m * sin)) + centery;
                 if (j >= 0 && j < image.getTileW() && k >= 0 && k < image.getTileH()) {
@@ -372,6 +449,50 @@ public class Renderer {
                 setPixel(x+offX, y+offY, color);
             }
         }
+    }
+
+    public void drawFillCirc(int offX, int offY, int radius, int color){
+        offX -= camX;
+        offY -= camY;
+
+//        Don't render code
+        if(offX < -radius) return;
+        if(offY < -radius) return;
+        if(offX >= pixelW) return;
+        if(offY >= pixelH) return;
+
+        int newX = 0;
+        int newY = 0;
+        int newWidth = radius;
+        int newHeight = radius;
+
+//         Clipping code
+        if (offX < 0){ newX -= newX; }
+        if (offY < 0){ newY -= newY; }
+        if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
+        if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
+
+//        int x = 0;
+//        int y = 0;
+//        for(int theta = 0; theta < 360; theta += 15){
+//            x = (int) (offX + radius*Math.cos(Math.toRadians(theta)));
+//            y = (int) (offY + radius*Math.sin(Math.toRadians(theta)));
+//            setPixel(x, y, color);
+//        }
+
+        for (int x = -radius; x < radius ; x++)
+        {
+            int height = (int)Math.sqrt(radius * radius - x * x);
+
+            for (int y = -height; y < height; y++)
+                setPixel(x + offX, y + offY, color);
+        }
+
+//        for(int y = 0; y < height; y++){
+//            for(int x = 0; x < width; x++){
+//                setPixel(x+offX, y+offY, color);
+//            }
+//        }
     }
 
     /**
