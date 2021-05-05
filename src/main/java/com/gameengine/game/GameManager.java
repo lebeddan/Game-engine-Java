@@ -3,11 +3,9 @@ package com.gameengine.game;
 import com.gameengine.engine.AbstractGame;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
-import com.gameengine.engine.gfx.Image;
-import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameObjects.Camera;
-import com.gameengine.game.GameObjects.Tank;
-import com.gameengine.game.GameObjects.world.Tree;
+import com.gameengine.game.GameObjects.GameObject;
+import com.gameengine.game.GameObjects.Player;
 import com.gameengine.game.MapObjects.Chunk;
 import com.gameengine.game.MapObjects.Map;
 import com.gameengine.game.MapObjects.TiledMap;
@@ -35,7 +33,7 @@ public class GameManager extends AbstractGame {
     private int cur_chunk;
 
     public GameManager() throws IOException {
-        objects.add(new Tank(5, 5));
+        objects.add(new Player(5, 5));
         camera = new Camera("player");
         loadLevel("src/Resources/Maps/loadtest.json");
     }
@@ -240,11 +238,6 @@ public class GameManager extends AbstractGame {
 
     public int getLevelH() {
         return levelH;
-    }
-
-    public static void printObjectSize(Object object) {
-        System.out.println("Object type: " + object.getClass() +
-                ", size: " + InstrumentationAgent.getObjectSize(object) + " bytes");
     }
 
     public int clamp(int value, int min, int max){

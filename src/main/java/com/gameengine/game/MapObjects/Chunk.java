@@ -1,12 +1,11 @@
 package com.gameengine.game.MapObjects;
 
 import com.gameengine.engine.gfx.ImageTile;
-import com.gameengine.game.GameObject;
+import com.gameengine.game.GameObjects.GameObject;
 import com.gameengine.game.GameObjects.world.Tree;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Chunk {
