@@ -23,6 +23,8 @@ public class Tank extends GameObject {
 
     private float acceleration, mass; // a = F / M
 
+    private String username;
+
     private ImageTile playerSprite = new ImageTile("src/Resources/Player/ww2tanki.png", 72, 86);
     private ImageTile gunSprite = new ImageTile("src/Resources/Player/tankGun.png", 32, 64);
     private float offX, offY;
@@ -44,8 +46,9 @@ public class Tank extends GameObject {
     private int animation;
 
 
-    public Tank(int posX, int posY) throws IOException {
+    public Tank(int posX, int posY, String username) throws IOException {
         this.shape = "circle";
+        this.username = username;
         this.tag = "player";
         this.tileX = posX;
         this.tileY = posY;
@@ -168,10 +171,11 @@ public class Tank extends GameObject {
                 Math.atan2(0,1));
         muzzleAxis = zeroPos.add((gunAxis.getX()+ gunSprite.getTileH()/2)*Math.cos(Math.toRadians(mousePosRot)), (gunAxis.getY())*Math.sin(Math.toRadians(mousePosRot)));
         if(gc.getInput().isKeyDown(KeyEvent.VK_E)){
-            gm.addObject(new Bullet(mousePosRot, posX +(int)tankAxis.getX(), posY+(int)tankAxis.getY()));
+//            gm.addObject(new Bullet(mousePosRot, posX +(int)tankAxis.getX(), posY+(int)tankAxis.getY(), bulletSprite));
         }
 
         gm.check_collisions(this);
+
     }
 
     @Override

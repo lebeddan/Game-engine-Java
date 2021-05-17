@@ -15,22 +15,18 @@ public class Bullet extends GameObject {
 
     private ImageTile bulletSprite;
 
-    {
-        try {
-            bulletSprite = new ImageTile("src/Resources/Tile/fireball.png", 16,16, 3);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private float speed = 200;
+    private float speed = 300;
     private float direction;
     private int travel_dist = 0;
+    private float animationX, animationY = 0;
     private Point2D bulletAxis = Point2D.ZERO;
     private Point2D posToDraw = Point2D.ZERO;
     private Point2D centerPoint;
+    private String username;
 
-    public Bullet(float direction, float offX, float offY){
+    public Bullet(float direction, float offX, float offY, String username, ImageTile bSprite){
+        this.username = username;
+        this.bulletSprite = bSprite;
         this.direction = direction;
         this.shape = "circle";
         posX = tileX * GameManager.TS + offX;
@@ -43,7 +39,7 @@ public class Bullet extends GameObject {
         double j = Math.sin(Math.toRadians(direction)) * height;
         posToDraw = Point2D.ZERO.add(i, j);
         centerPoint = posToDraw;
-        System.out.println(posToDraw.getX() + " " + posToDraw.getY() + " " + direction);
+//        System.out.println(posToDraw.getX() + " " + posToDraw.getY() + " " + direction);
         this.offX = offX;
         this.offY = offY;
     }
@@ -93,6 +89,21 @@ public class Bullet extends GameObject {
         posX = tileX * GameManager.TS + offX;
         posY = tileY * GameManager.TS + offY;
 
+        animationX += dt * 20;
+//        System.out.println((int)animationX);
+        if(animationX > 5){
+//            System.out.println(dt);
+            animationX = 0;
+            animationY += 1;
+//            System.out.println(animationX + " " + animationY);
+            if(animationY > 4){
+                animationY = 0;
+            }
+        }
+//        animationY++;
+//        animationY = animationY%5;
+//        System.out.println(animationX);
+
         gm.check_collisions(this);
 
 //        System.out.println(travel_dist);
@@ -104,7 +115,7 @@ public class Bullet extends GameObject {
     public void render(GameContainer gc, Renderer r) {
 //        r.drawFillRect((int)posX-2, (int)posY-2, 6, 6, 0xffff00ff);
         r.drawImageTile(bulletSprite, (int)(posX + posToDraw.getX() - width/2), (int)(posY + posToDraw.getY()- height/2),
-                0, 0, (int)direction+90, bulletAxis);
+                (int)animationX, (int)animationY, (int)direction, bulletAxis);
 //        r.drawFillCirc((int)(posX +posToDraw.getX()), (int)(posY+posToDraw.getY()), radius, 0x99ff0000);
 //        r.drawFillCirc((int)(posX + centerPoint.getX()), (int)(posY+centerPoint.getY()), radius, 0x99ff0000);
 
@@ -112,13 +123,17 @@ public class Bullet extends GameObject {
 
     @Override
     public void hit(GameObject obj) {
-        if(obj.getClass() == Tree.class){
+//        if(obj.getClass() == Tree.class){
             dead = true;
-        }
+//        }
     }
 
     @Override
     public Point2D getCenter() {
         return centerPoint;
+    }
+
+    public void setRotation(float rotation) {
+        this.direction = rotation;
     }
 }

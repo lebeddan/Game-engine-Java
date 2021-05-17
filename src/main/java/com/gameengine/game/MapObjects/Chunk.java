@@ -3,6 +3,7 @@ package com.gameengine.game.MapObjects;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameObjects.GameObject;
 import com.gameengine.game.GameObjects.world.Tree;
+import com.gameengine.game.GameObjects.world.Wall;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,34 +35,38 @@ public class Chunk {
         this.posX = (chunk_num%map.getChunk_width())*(map.getTile_size()*map.get_cWidth());
         this.posY = (chunk_num/map.getChunk_width())*(map.getTile_size()*map.get_cHeight());
 //        System.out.println(posX + " " +posY);
-//        System.out.println(Arrays.toString(objects_l));
+        System.out.println(grasstileSprite.getTileH());
         imWidth = grasstileSprite.getWidth();
+        int imTWidth = grasstileSprite.getWidth()/ grasstileSprite.getTileW();
+        int imTHeight = grasstileSprite.getHeight()/ grasstileSprite.getTileH();
         int n = 0;
         if(tiles != null) {
             for (int y = 0; y < height; y += grasstileSprite.getTileH()) {
                 for (int x = 0; x < width; x += grasstileSprite.getTileW()) {
-                    if (tiles[n] == 1) {
-                        for (int a = 0; a < grasstileSprite.getTileH(); a++) {
-                            for (int b = 0; b < grasstileSprite.getTileW(); b++) {
+                    int number = tiles[n];
+                    number--;
+                    for (int a = 0; a < grasstileSprite.getTileH(); a++) {
+                        for (int b = 0; b < grasstileSprite.getTileW(); b++) {
 //                            System.out.println((b+x)+(a+y)*width);
-                                pixel_foreground[(b + x) + (a + y) * width] = grasstileSprite.getPixels()[b + a * imWidth];
-                            }
-                        }
-                    } else if (tiles[n] == 2) {
-                        for (int a = 0; a < grasstileSprite.getTileH(); a++) {
-                            for (int b = 0; b < grasstileSprite.getTileW(); b++) {
-                                pixel_foreground[(b + x) + (a + y) * width] = grasstileSprite.getPixels()[(b + grasstileSprite.getTileW()) + a * imWidth];
-//                                    System.out.println(grasstileSprite.getPixels()[b+a*32]);
-                            }
+                            pixel_foreground[(b + x) + (a + y) * width] =
+                                    grasstileSprite.getPixels()[(b+(grasstileSprite.getTileW()*(number%imTWidth))) +
+                                            (a+(grasstileSprite.getTileH()*(number/imTWidth))) * imWidth];
                         }
                     }
 
-                    if (objects_l[n] == 3) {
-                        try {
-                            objects.add(new Tree(Integer.toString(n), x + posX, y + posY));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    try {
+                        switch (objects_l[n]) {
+                            case 3 -> objects.add(new Tree(Integer.toString(n), x + posX, y + posY));
+                            case 26 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 26));
+                            case 27 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 27));
+                            case 29 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 29));
+                            case 31 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 31));
+                            case 37 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 37));
+                            case 39 -> objects.add(new Wall(Integer.toString(n), x + posX, y + posY, 39));
+
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
                     n++;
