@@ -3,7 +3,9 @@ package com.gameengine.game;
 import com.gameengine.engine.AbstractGame;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
+import com.gameengine.game.GUI.ViewManager;
 import com.gameengine.game.GameObjects.Camera;
+import com.gameengine.game.GameObjects.Enemy;
 import com.gameengine.game.GameObjects.GameObject;
 import com.gameengine.game.GameObjects.Multiplayer.PlayerMP;
 import com.gameengine.game.GameObjects.Player;
@@ -19,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -50,6 +53,10 @@ public class GameManager extends AbstractGame {
     private GameContainer gc;
 
     public GameManager() throws IOException {
+//        startGame();
+    }
+
+    public void startGame(Stage stage, String username, boolean server) throws IOException {
         gc = new GameContainer(this);
 
         //TODO: FIX STUFF WITH CAMERA
@@ -57,11 +64,16 @@ public class GameManager extends AbstractGame {
         gc.setHeight(720);
         gc.setScale(1);
         gc.start();
+        Scene gameScene = gc.getWindow().getMainScene();
+//        Stage gameStage = new Stage();
+//        gameStage.setScene(gameScene);
+//        stage.hide();
+        stage.setScene(gc.getWindow().getMainScene());
 
-        System.out.println("Do you want to start a server?");
-        Scanner scanner = new Scanner(System.in);
-        String msg = scanner.nextLine();
-        if(msg.equalsIgnoreCase("yes")){
+//        System.out.println("Do you want to start a server?");
+//        Scanner scanner = new Scanner(System.in);
+//        String msg = scanner.nextLine();
+        if(server){
             socketServer = new GameServer(this);
             socketServer.start();
         }
@@ -71,8 +83,9 @@ public class GameManager extends AbstractGame {
 
         loadLevel("src/Resources/Maps/maptilesettest.json");
 
-        System.out.println("Your username: ");
-        username = scanner.nextLine();
+//        System.out.println("Your username: ");
+//        username = scanner.nextLine();
+        this.username = username;
         player = new PlayerMP(5, 5, username, gc.getInput(), null, -1);
         Packet00Login loginPacket = new Packet00Login(username, player.getPosX(), player.getPosY());
         getObjects().add(player);
@@ -82,13 +95,18 @@ public class GameManager extends AbstractGame {
         loginPacket.writeData(socketClient);
 
         camera = new Camera(username);
+//        stage.hide();
+        stage.show();
+//        gameStage.show();
     }
 
     @Override
     public void stop(){
         System.out.println("Hi");
-        Packet01Disconnect packet = new Packet01Disconnect(player.getUsername());
-        packet.writeData(socketClient);
+        if(socketClient != null) {
+            Packet01Disconnect packet = new Packet01Disconnect(player.getUsername());
+            packet.writeData(socketClient);
+        }
         System.exit(0);
     }
 
@@ -100,20 +118,17 @@ public class GameManager extends AbstractGame {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Tank Souls");
-//        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//            @Override
-//            public void handle(WindowEvent t) {
-//                Platform.exit();
-//                System.exit(0);
-//            }
-//        });
 //        gc.getRenderer().setAmbientColor(-1);
-        stage.setScene(gc.getWindow().getMainScene());
+        ViewManager manager = new ViewManager(this, stage);
+        stage = manager.getMainStage();
+//        stage.setScene(gc.getWindow().getMainScene());
+//        startGame(stage, "vas", true);
         stage.show();
     }
 
     @Override
     public void init(GameContainer gc){
+        System.out.println("Starting");
         gc.getRenderer().setAmbientColor(-1);
     }
 
@@ -262,28 +277,14 @@ public class GameManager extends AbstractGame {
     public void check_collisions(GameObject mainObj){
         String mainType = mainObj.getShape();
         for(Chunk chunk : loaded_chunks) {
-            for (GameObject obj : chunk.getObjects()){
+            ArrayList<GameObject> arr = new ArrayList<>(chunk.getObjects());
+            for(GameObject ob : objects){
+                if(ob instanceof PlayerMP && mainObj != ob){
+                    arr.add(ob);
+                }
+            }
+            for (GameObject obj : arr){
                 if(obj.getShape().equals("square")) {
-//                    float testX = (float) mainObj.getCenter().getX() + mainObj.getPosX();
-//                    float testY = (float) mainObj.getCenter().getY() + mainObj.getPosY();
-//
-//                    if (mainObj.getCenter().getX()+ mainObj.getPosX() < obj.getPosX())         testX = obj.getPosX();      // test left edge
-//                    else if (mainObj.getCenter().getX()+ mainObj.getPosX() > obj.getPosX()+obj.getWidth()) testX = obj.getPosX()+obj.getWidth();   // right edge
-//                    if (mainObj.getCenter().getY()+ mainObj.getPosY() < obj.getPosY())         testY = obj.getPosY();      // top edge
-//                    else if (mainObj.getCenter().getY()+ mainObj.getPosY() < obj.getPosY()+obj.getHeight()) testY = obj.getPosY()+obj.getHeight();   // bottom edge
-//
-//                    float distX = (float) (mainObj.getPosX()+mainObj.getRadius() - testX);
-//                    float distY = (float) (mainObj.getPosY()+mainObj.getRadius() - testY);
-//                    float distance = (float) Math.sqrt( (distX*distX) + (distY*distY) );
-//
-//                    if(distance <= mainObj.getRadius()){
-//                        obj.hit(mainObj);
-//                        mainObj.hit(obj);
-//                    }
-
-
-                    int centerX = (int) ( mainObj.getPosX() + mainObj.getRadius());
-                    int centerY = (int) (mainObj.getPosY() + mainObj.getRadius());
 //                    Point2D center = Point2D.ZERO.add(mainObj.getPosX()+ mainObj.getRadius(), mainObj.getPosY()+ mainObj.getRadius());
                     Point2D center = Point2D.ZERO.add(mainObj.getCenter().getX() + mainObj.getPosX(), mainObj.getCenter().getY() + mainObj.getPosY());
                     int sqHalfX = obj.getWidth()/2;
@@ -302,7 +303,6 @@ public class GameManager extends AbstractGame {
                     Point2D closest = Point2D.ZERO.add(aabb.getX() + diffClampX, aabb.getY() + diffClampY);
 
                     if(closest.distance(center) < mainObj.getRadius()){
-                        System.out.println("Nice");
                         obj.hit(mainObj);
                         mainObj.hit(obj);
                     }
@@ -329,6 +329,37 @@ public class GameManager extends AbstractGame {
                 }
             }
         }
+    }
+
+    public Point2D check_radius(Enemy mainObj){
+        for(Chunk chunk : loaded_chunks) {
+            ArrayList<GameObject> arr = new ArrayList<>(chunk.getObjects());
+            for(GameObject ob : objects){
+                if(ob instanceof PlayerMP){
+                    arr.add(ob);
+                }
+            }
+            for (GameObject obj : arr){
+                if (obj.getShape().equals("circle")){
+                    Point2D mainCenter = Point2D.ZERO.add(mainObj.getPosX()+mainObj.getCenter().getX(), mainObj.getPosY()+mainObj.getCenter().getY());
+                    Point2D objCenter = Point2D.ZERO.add(obj.getPosX()+obj.getCenter().getX(), obj.getPosY()+obj.getCenter().getY());
+                    if(mainCenter.distance(objCenter) < (mainObj.getDetectRadius()+obj.getRadius())){
+                        return Point2D.ZERO.add(mainCenter);
+                    }
+                } else if (obj.getShape().equals("someShape")){
+                    boolean collisionX = (mainObj.getPosX() + mainObj.getWidth() >= obj.getPosX()) && (obj.getPosX() + obj.getWidth() >= mainObj.getPosX());
+                    boolean collisionY = (mainObj.getPosY() + mainObj.getHeight() >= obj.getPosY()) && (obj.getPosY() + obj.getHeight() >= mainObj.getPosY());
+
+                    if (collisionX && collisionY) {
+                        System.out.println("Nice");
+//                        mainObj.dead = true;
+                        mainObj.hit(obj);
+                        obj.hit(mainObj);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void removePlayerMP(String username){

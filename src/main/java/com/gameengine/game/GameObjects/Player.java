@@ -244,6 +244,15 @@ public class Player extends GameObject{
          * Update animation and speed of player end.
          */
 
+        gm.check_collisions(this);
+
+//        Point2D playerPos = gm.check_radius(this, detection_radius);
+//        if(playerPos != null){
+//            enemy_goes_to_Player(playerPos);
+//            enemy_shoots_player(playerPos);
+//
+//        }
+
         // Send move packet
         if(isMoving || isMRotating || isRotating){
             Packet02Move packet = new Packet02Move(this.username, posX, posY, rotation, mousePosRot);
@@ -298,7 +307,6 @@ public class Player extends GameObject{
          * Acceleration and Stopping end.
          */
 
-        gm.check_collisions(this);
         /**
          * Shooting end.
          */
@@ -310,14 +318,14 @@ public class Player extends GameObject{
         r.drawImageTile(playerSprite, (int) posX, (int) posY, (int) 0, 0, rotation, tankAxis);
         r.drawImageTile(gunSprite, (int) (posX+ tankAxis.getX()- gunSprite.getTileW()/2), (int) ((int) posY-2), (int) 0, 0, mousePosRot+90, gunAxis);
         r.drawText(username, (int)posX + width/4, (int)posY-height/4, 0xffffffff);
-//        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radius,0x99ff0000);
+        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radius,0x99ff0000);
 
     }
 
     @Override
     public void hit(GameObject obj) {
-        posX -= offX*2;
-        posY -= offY*2;
+        posX -= offX * 2;
+        posY -= offY * 2;
         offX = 0;
         offY = 0;
     }

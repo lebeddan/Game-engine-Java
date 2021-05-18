@@ -17,7 +17,7 @@ public class Bullet extends GameObject {
 
     private float speed = 300;
     private float direction;
-    private int travel_dist = 0;
+    private Point2D sent_pos;
     private float animationX, animationY = 0;
     private Point2D bulletAxis = Point2D.ZERO;
     private Point2D posToDraw = Point2D.ZERO;
@@ -31,6 +31,7 @@ public class Bullet extends GameObject {
         this.shape = "circle";
         posX = tileX * GameManager.TS + offX;
         posY = tileY * GameManager.TS + offY;
+        this.sent_pos = Point2D.ZERO.add(posX, posY);
         radius = 12;
         this.width = (int) (Math.max(bulletSprite.getTileW(), bulletSprite.getTileH()));
         this.height =(int) (Math.max(bulletSprite.getTileW(), bulletSprite.getTileH()));
@@ -82,12 +83,13 @@ public class Bullet extends GameObject {
 //            this.dead = true;
 //        }
 
-        if(travel_dist >= 10*GameManager.TS){
+        if(sent_pos.distance(Point2D.ZERO.add(posX, posY)) > 1300){
             this.dead = true;
         }
 
         posX = tileX * GameManager.TS + offX;
         posY = tileY * GameManager.TS + offY;
+        System.out.println(posX + " " + posY);
 
         animationX += dt * 20;
 //        System.out.println((int)animationX);
