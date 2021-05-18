@@ -23,9 +23,9 @@ public class Map {
     private int x;
     private int y;
 
-    private int chunk_width = 10;
-    private int chunk_height = 6;
-    private int tile_size = 128;
+    private int chunk_width = 20;
+    private int chunk_height = 12;
+    private int tile_size = 64;
 
     private ArrayList<Chunk> chunks;
     private List<Integer> objects;
@@ -33,7 +33,7 @@ public class Map {
 
     {
         try {
-            tileSet = new ImageTile("src/Resources/Tile/grass.png", 32, 32,tile_size/32);
+            tileSet = new ImageTile("src/Resources/Tile/myspritesheet.png", 16, 16,tile_size/16);
         } catch (IOException e) {
             e.printStackTrace();
         }
