@@ -4,7 +4,7 @@ package com.gameengine.engine;
 import com.gameengine.engine.gfx.*;
 import com.gameengine.engine.gfx.Font;
 import com.gameengine.engine.gfx.Image;
-import com.gameengine.game.MapObjects.Chunk;
+import com.gameengine.game.mapobjects.Chunk;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import java.util.ArrayList;
