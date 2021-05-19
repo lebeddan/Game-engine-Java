@@ -3,33 +3,30 @@ package com.gameengine.game;
 import com.gameengine.engine.AbstractGame;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
-import com.gameengine.game.GUI.ViewManager;
-import com.gameengine.game.GameObjects.Camera;
-import com.gameengine.game.GameObjects.Enemy;
-import com.gameengine.game.GameObjects.GameObject;
-import com.gameengine.game.GameObjects.Multiplayer.PlayerMP;
-import com.gameengine.game.GameObjects.Player;
-import com.gameengine.game.MapObjects.Chunk;
-import com.gameengine.game.MapObjects.Map;
-import com.gameengine.game.MapObjects.TiledMap;
-import com.gameengine.game.Server.GameClient;
-import com.gameengine.game.Server.GameServer;
-import com.gameengine.game.Server.packets.Packet00Login;
-import com.gameengine.game.Server.packets.Packet01Disconnect;
+import com.gameengine.game.gui.ViewManager;
+import com.gameengine.game.gameobjects.Camera;
+import com.gameengine.game.gameobjects.Enemy;
+import com.gameengine.game.gameobjects.GameObject;
+import com.gameengine.game.gameobjects.Multiplayer.PlayerMP;
+import com.gameengine.game.gameobjects.Player;
+import com.gameengine.game.mapobjects.Chunk;
+import com.gameengine.game.mapobjects.Map;
+import com.gameengine.game.mapobjects.TiledMap;
+import com.gameengine.game.server.GameClient;
+import com.gameengine.game.server.GameServer;
+import com.gameengine.game.server.packets.Packet00Login;
+import com.gameengine.game.server.packets.Packet01Disconnect;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class GameManager extends AbstractGame {
 
@@ -81,7 +78,7 @@ public class GameManager extends AbstractGame {
         socketClient = new GameClient("localhost", this);
         socketClient.start();
 
-        loadLevel("src/Resources/Maps/maptilesettest.json");
+        loadLevel("src/main/resources/Maps/maptilesettest.json");
 
 //        System.out.println("Your username: ");
 //        username = scanner.nextLine();
