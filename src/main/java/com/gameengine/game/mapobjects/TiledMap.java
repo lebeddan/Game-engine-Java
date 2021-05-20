@@ -8,8 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TiledMap {
+    private static final Logger logger = Logger.getLogger(String.valueOf(TiledMap.class));
+
     private int compressionLevel;
     private int height;
     private boolean infinite;
@@ -58,7 +61,7 @@ public class TiledMap {
             JsonElement jse = tile.layers.getAsJsonArray().get(1).getAsJsonObject().get("data");
             map = new Map(tile.layers.getAsJsonArray().get(0), jse);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.finest("File not found "+ e);
         }
         return map;
     }
