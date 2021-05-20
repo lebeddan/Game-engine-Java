@@ -1,6 +1,7 @@
 package com.gameengine.game.mapobjects;
 
 import com.gameengine.engine.gfx.ImageTile;
+import com.gameengine.game.server.GameServer;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
@@ -9,8 +10,11 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Map {
+    private static final Logger logger = Logger.getLogger(String.valueOf(Map.class));
+
     private List<Integer> data;
     private int height;
     private int id;
@@ -34,7 +38,7 @@ public class Map {
         try {
             tileSet = new ImageTile("src/Resources/Tile/myspritesheet.png", 16, 16,tile_size/16);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.finest("IOException catch" + e);
         }
     }
 
@@ -71,7 +75,7 @@ public class Map {
     }
 
     private void fill_chunks(){
-        System.out.println("CHunk filled called");
+        logger.info("Chunk filled called");
         int cTileX = width/chunk_width;
         int cTileY = height/chunk_height;
         int[] chunk_tiles = new int[chunk_width * chunk_height];
