@@ -3,6 +3,7 @@ package com.gameengine.game;
 import com.gameengine.engine.AbstractGame;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.game.gui.ViewManager;
 import com.gameengine.game.gameobjects.Camera;
 import com.gameengine.game.gameobjects.Enemy;
@@ -22,15 +23,18 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameManager extends AbstractGame {
 
-    public static final int TS = 128;
+    public static final int TS = 64;
     private static Canvas mainCanvas;
 
     private boolean[] collision;
@@ -49,12 +53,18 @@ public class GameManager extends AbstractGame {
     private int cur_chunk;
     private GameContainer gc;
 
+    private SoundClip bgMusic = new SoundClip("src/main/resources/Sounds/gameBGmusic.mp3", "bg");
+
     public GameManager() throws IOException {
 //        startGame();
     }
 
-    public void startGame(Stage stage, String username, boolean server) throws IOException {
+    public void startGame(Stage stage, String username, boolean server, String IP) throws IOException {
         gc = new GameContainer(this);
+
+        bgMusic.loop();
+        bgMusic.setVolume(0.5);
+        bgMusic.play();
 
         //TODO: FIX STUFF WITH CAMERA
         gc.setWidth(1280);
@@ -71,11 +81,11 @@ public class GameManager extends AbstractGame {
 //        Scanner scanner = new Scanner(System.in);
 //        String msg = scanner.nextLine();
         if(server){
-            socketServer = new GameServer(this);
+            socketServer = new GameServer(this, IP);
             socketServer.start();
         }
 
-        socketClient = new GameClient("localhost", this);
+        socketClient = new GameClient(IP, this);
         socketClient.start();
 
         loadLevel("src/main/resources/Maps/maptilesettest.json");
@@ -83,7 +93,7 @@ public class GameManager extends AbstractGame {
 //        System.out.println("Your username: ");
 //        username = scanner.nextLine();
         this.username = username;
-        player = new PlayerMP(5, 5, username, gc.getInput(), null, -1);
+        player = new PlayerMP(1, 8, username, gc.getInput(), null, -1);
         Packet00Login loginPacket = new Packet00Login(username, player.getPosX(), player.getPosY());
         getObjects().add(player);
         if(socketServer != null){
@@ -94,6 +104,7 @@ public class GameManager extends AbstractGame {
         camera = new Camera(username);
 //        stage.hide();
         stage.show();
+        getObjects().add(new Enemy(10, 10, this));
 //        gameStage.show();
     }
 
@@ -130,15 +141,19 @@ public class GameManager extends AbstractGame {
     }
 
     public void loadLevel(String path) throws IOException {
-        map = TiledMap.create_map(path);
+        map = TiledMap.create_map(path, this);
         loaded_chunks = new ArrayList<Chunk>();
         loaded_chunks.add(map.get_chunk(0));
+
+//        loaded_chunks.get(0).getObjects().add(new Enemy(20, 20));
+
         cur_chunk = -1;
         levelW = map.getLevel_width();
         levelH = map.getLevel_height();
         levelWChunks = map.getChunk_width();
         chunk_width = map.get_cWidth()*TS;
         chunk_height = map.get_cHeight()*TS;
+        System.out.println("Chunks: "+levelWChunks);
     }
 
     @Override
@@ -186,6 +201,11 @@ public class GameManager extends AbstractGame {
         }
         for(Chunk chunk : loaded_chunks){
             chunk.getObjects().removeIf(GameObject::isDead);
+            for(GameObject obj : chunk.getObjects()){
+                if(obj instanceof Enemy){
+                    obj.update(gc, this, deltaTime);
+                }
+            }
         }
         camera.update(gc, this, deltaTime);
     }
@@ -330,7 +350,7 @@ public class GameManager extends AbstractGame {
 
     public Point2D check_radius(Enemy mainObj){
         for(Chunk chunk : loaded_chunks) {
-            ArrayList<GameObject> arr = new ArrayList<>(chunk.getObjects());
+            ArrayList<GameObject> arr = new ArrayList<>();
             for(GameObject ob : objects){
                 if(ob instanceof PlayerMP){
                     arr.add(ob);
@@ -341,7 +361,7 @@ public class GameManager extends AbstractGame {
                     Point2D mainCenter = Point2D.ZERO.add(mainObj.getPosX()+mainObj.getCenter().getX(), mainObj.getPosY()+mainObj.getCenter().getY());
                     Point2D objCenter = Point2D.ZERO.add(obj.getPosX()+obj.getCenter().getX(), obj.getPosY()+obj.getCenter().getY());
                     if(mainCenter.distance(objCenter) < (mainObj.getDetectRadius()+obj.getRadius())){
-                        return Point2D.ZERO.add(mainCenter);
+                        return Point2D.ZERO.add(objCenter);
                     }
                 } else if (obj.getShape().equals("someShape")){
                     boolean collisionX = (mainObj.getPosX() + mainObj.getWidth() >= obj.getPosX()) && (obj.getPosX() + obj.getWidth() >= mainObj.getPosX());

@@ -12,9 +12,9 @@ import java.io.IOException;
 
 public class Wall extends GameObject {
 
-    private ImageTile wallSprite = new ImageTile("src/Resources/Tile/myspritesheet.png", 16, 16, 4);
-    private ImageTile hitSprite = new ImageTile("src/Resources/Tile/hit_effect.png", 32, 32, 3);
-    private ImageTile deathSprite = new ImageTile("src/Resources/Tile/explosion.png", 64, 64, 2);
+    private ImageTile wallSprite = new ImageTile("src/main/resources/Tile/myspritesheet.png", 16, 16, 4);
+    private ImageTile hitSprite = new ImageTile("src/main/resources/Tile/hit_effect.png", 32, 32, 3);
+    private ImageTile deathSprite = new ImageTile("src/main/resources/Tile/explosion.png", 64, 64, 2);
     private int hp = 3;
     private int death_frames = 30;
     private int hit_frames = 5;
@@ -99,7 +99,7 @@ public class Wall extends GameObject {
 
     @Override
     public Point2D getCenter() {
-        return null;
+        return centerPoint;
     }
 
     private void hit_animation(Renderer r){

@@ -36,9 +36,6 @@ public class Window {
     private int width;
     private int height;
 
-    private IntBuffer intBuffer;
-    private PixelBuffer<IntBuffer> pixelBuffer;
-
     public Window(GameContainer gc, Canvas canvas){
         width = gc.getWidth();
         height = gc.getHeight();

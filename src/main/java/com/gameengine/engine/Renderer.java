@@ -338,6 +338,9 @@ public class Renderer {
                 final int j = ((int) (m * cos + n * sin)) + centerx;
                 final int k = ((int) (n * cos - m * sin)) + centery;
                 if (j >= 0 && j < image.getTileW() && k >= 0 && k < image.getTileH()) {
+                    if(image.getPixels().length == 0){
+                        System.out.println("ASDasd");
+                    }
                     setPixel(x + offX, y + offY, image.getPixels()[(k+ tileY * image.getTileH()) * image.getWidth() + (j+tileX * image.getTileW())]);
                 }
 

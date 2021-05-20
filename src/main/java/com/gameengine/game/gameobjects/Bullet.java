@@ -86,7 +86,7 @@ public class Bullet extends GameObject {
 
         posX = tileX * GameManager.TS + offX;
         posY = tileY * GameManager.TS + offY;
-        System.out.println(posX + " " + posY);
+//        System.out.println(posX + " " + posY);
 
         animationX += dt * 20;
 //        System.out.println((int)animationX);

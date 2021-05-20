@@ -4,6 +4,7 @@ package com.gameengine.game.gameobjects;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Input;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import com.gameengine.game.server.packets.Packet02Move;
@@ -60,6 +61,8 @@ public class Player extends GameObject{
     private boolean isMoving, isMRotating, isRotating;
     private Point2D centerPoint;
 
+    private SoundClip fireSound = new SoundClip("src/main/resources/Sounds/gameOver.wav", "clip");
+
     /**
      * Auxiliary parameters.
      */
@@ -74,6 +77,7 @@ public class Player extends GameObject{
      * @throws IOException
      */
     public Player(int posX, int posY, String username, Input input) throws IOException {
+//        fireSound.play();
         // Calculating X,Y axis start
         this.username = username;
         this.input = input;
@@ -100,10 +104,10 @@ public class Player extends GameObject{
         ammoMax = 1000000;
         lastShootTime = 0;
         turnspeed = 3;
-        power = 1;
+        power = 6;
         angularDrag = (float)0.9;
         drag = (float)0.9;
-        MaxSpeed = 50;
+        MaxSpeed = 80;
 
     }
 
@@ -148,6 +152,7 @@ public class Player extends GameObject{
                 final float sin = ((float) Math.sin(Math.toRadians(rotation - 90)) * ((float) tankAxis.getY() / 2));
                 offX += dt * cos;
                 offY += dt * sin;
+//                System.out.println(offX +" " + offY);
 
             }
 
@@ -324,10 +329,14 @@ public class Player extends GameObject{
 
     @Override
     public void hit(GameObject obj) {
-        posX -= offX * 2;
-        posY -= offY * 2;
-        offX = 0;
-        offY = 0;
+        if(obj instanceof Bullet) {
+
+        } else {
+            posX -= offX * 2;
+            posY -= offY * 2;
+            offX = 0;
+            offY = 0;
+        }
     }
 
     @Override
@@ -349,5 +358,6 @@ public class Player extends GameObject{
 
     public void fireBullet(GameManager gm){
         gm.addObject(new Bullet(mousePosRot, posX + (int) tankAxis.getX(), posY + (int) tankAxis.getY(), username, bulletSprite));
+        fireSound.play();
     }
 }

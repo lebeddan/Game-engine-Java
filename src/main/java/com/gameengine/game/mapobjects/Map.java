@@ -1,6 +1,7 @@
 package com.gameengine.game.mapobjects;
 
 import com.gameengine.engine.gfx.ImageTile;
+import com.gameengine.game.GameManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
@@ -22,17 +23,19 @@ public class Map {
     private int x;
     private int y;
 
+    // MAP DIMENSION MUST BE DIVIDABLE BY :
     private int chunk_width = 20;
     private int chunk_height = 12;
     private int tile_size = 64;
 
+    private GameManager gm;
     private ArrayList<Chunk> chunks;
     private List<Integer> objects;
     private ImageTile tileSet;
 
     {
         try {
-            tileSet = new ImageTile("src/Resources/Tile/myspritesheet.png", 16, 16,tile_size/16);
+            tileSet = new ImageTile("src/main/resources/Tile/myspritesheet.png", 16, 16,tile_size/16);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +43,8 @@ public class Map {
 
     Type listType = new TypeToken<List<Integer>>() {}.getType();
 
-    public Map(JsonElement list, JsonElement jse){
+    public Map(JsonElement list, JsonElement jse, GameManager gm){
+        this.gm = gm;
         Gson gson = new Gson();
 //        System.out.println(gson.fromJson(list, Map.class).x);
         Map mp = gson.fromJson(list, Map.class);

@@ -1,5 +1,6 @@
 package com.gameengine.game.mapobjects;
 
+import com.gameengine.game.GameManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -48,7 +49,7 @@ public class TiledMap {
 //        this.width = width;
 //    }
 
-    public static Map create_map(String path){
+    public static Map create_map(String path, GameManager gm){
         Gson gson = new Gson();
         TiledMap tile = null;
         Map map = null;
@@ -56,7 +57,7 @@ public class TiledMap {
             Reader reader = new FileReader(path);
             tile = gson.fromJson(reader, TiledMap.class);
             JsonElement jse = tile.layers.getAsJsonArray().get(1).getAsJsonObject().get("data");
-            map = new Map(tile.layers.getAsJsonArray().get(0), jse);
+            map = new Map(tile.layers.getAsJsonArray().get(0), jse, gm);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
