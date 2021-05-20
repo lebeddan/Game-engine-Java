@@ -12,6 +12,18 @@ public class GameClient extends Thread
 {
     private static final Logger logger = Logger.getLogger(String.valueOf(GameClient.class));
 
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
+    public InetAddress getIpAddress() {
+        return ipAddress;
+    }
+
     private DatagramSocket socket;
     private InetAddress ipAddress;
     private GameManager gm;
@@ -23,6 +35,14 @@ public class GameClient extends Thread
             this.ipAddress = InetAddress.getByName(ipAddress);
         } catch (SocketException | UnknownHostException e) {
             logger.finest("SocketException and UnknownHostException catch " + e);
+        }
+    }
+
+    public GameClient(String ipAddress){
+        try {
+            this.ipAddress = InetAddress.getByName(ipAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         }
     }
 
