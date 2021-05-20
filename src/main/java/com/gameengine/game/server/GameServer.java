@@ -17,6 +17,18 @@ public class GameServer extends Thread
 {
     private static final Logger logger = Logger.getLogger(String.valueOf(GameServer.class));
 
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public DatagramSocket getSocket() {
+        return socket;
+    }
+
+    public List<PlayerMP> getConnectedPlayers() {
+        return connectedPlayers;
+    }
+
     private GameManager gm;
     private DatagramSocket socket;
     private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
