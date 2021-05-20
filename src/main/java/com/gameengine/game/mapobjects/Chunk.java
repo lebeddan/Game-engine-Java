@@ -8,8 +8,11 @@ import com.gameengine.game.gameobjects.world.Wall;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Chunk {
+    private static final Logger logger = Logger.getLogger(String.valueOf(Chunk.class));
+
     private int width;
     private int height;
     private int pixel_foreground[];
@@ -35,7 +38,7 @@ public class Chunk {
         this.posX = (chunk_num%map.getChunk_width())*(map.getTile_size()*map.get_cWidth());
         this.posY = (chunk_num/map.getChunk_width())*(map.getTile_size()*map.get_cHeight());
 //        System.out.println(posX + " " +posY);
-        System.out.println(grasstileSprite.getTileH());
+        logger.info("GrassSprite height " + grasstileSprite.getTileH());
         imWidth = grasstileSprite.getWidth();
         int imTWidth = grasstileSprite.getWidth()/ grasstileSprite.getTileW();
         int imTHeight = grasstileSprite.getHeight()/ grasstileSprite.getTileH();
@@ -66,7 +69,7 @@ public class Chunk {
 
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.finest("Objects not loaded " + e);
                     }
 
                     n++;
