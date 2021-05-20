@@ -6,9 +6,12 @@ import com.gameengine.game.server.packets.*;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.logging.Logger;
 
 public class GameClient extends Thread
 {
+    private static final Logger logger = Logger.getLogger(String.valueOf(GameClient.class));
+
     private DatagramSocket socket;
     private InetAddress ipAddress;
     private GameManager gm;
@@ -19,7 +22,7 @@ public class GameClient extends Thread
             this.socket = new DatagramSocket();
             this.ipAddress = InetAddress.getByName(ipAddress);
         } catch (SocketException | UnknownHostException e) {
-            e.printStackTrace();
+            logger.finest("SocketException and UnknownHostException catch " + e);
         }
     }
 
@@ -30,7 +33,7 @@ public class GameClient extends Thread
             try {
                 socket.receive(packet);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.finest("IOException catch " + e);
             }
 
             parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
@@ -48,7 +51,7 @@ public class GameClient extends Thread
                 break;
             case LOGIN:
                 packet = new Packet00Login(data);
-                System.out.println("["+address.getHostAddress()+":"+port+"] "+((Packet00Login)packet).getUsername() + " has joined!!");
+                logger.info("["+address.getHostAddress()+":"+port+"] "+((Packet00Login)packet).getUsername() + " has joined!!");
                 try {
                     PlayerMP player = null;
                     System.out.println((int)((Packet00Login)packet).getY());
@@ -61,7 +64,7 @@ public class GameClient extends Thread
                 break;
             case DISCONNECT:
                 packet = new Packet01Disconnect(data);
-                System.out.println("["+address.getHostAddress()+":"+port+"] "+((Packet01Disconnect)packet).getUsername() + " has left the game!");
+                logger.info("["+address.getHostAddress()+":"+port+"] "+((Packet01Disconnect)packet).getUsername() + " has left the game!");
                 gm.removePlayerMP(((Packet01Disconnect)packet).getUsername());
                 break;
 
@@ -80,8 +83,8 @@ public class GameClient extends Thread
     private void handleBullet(Packet03Bullet packet){
         PlayerMP player = (PlayerMP) this.gm.getObject(packet.getUsername());
         if(!gm.getUsername().equals(player.getUsername())) {
-            System.out.println("[" + player.port + "]" + "Sent a bullet: " + this.socket.getLocalPort() + " " + player.port);
-            System.out.println(this.socket.getLocalPort());
+            logger.info("[" + player.port + "]" + "Sent a bullet: " + this.socket.getLocalPort() + " " + player.port);
+            logger.info(""+this.socket.getLocalPort());
             player.fireBullet(gm);
         }
     }
@@ -99,7 +102,7 @@ public class GameClient extends Thread
         try {
             socket.send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.finest("Packet to send not exist " + e);
         }
     }
 }
