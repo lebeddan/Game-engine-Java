@@ -2,6 +2,7 @@ package com.gameengine.game.server;
 
 import com.gameengine.game.GameManager;
 import com.gameengine.game.gameobjects.Multiplayer.PlayerMP;
+import com.gameengine.game.mapobjects.TiledMap;
 import com.gameengine.game.server.packets.*;
 import com.gameengine.game.server.packets.Packet.PacketTypes;
 
@@ -9,10 +10,13 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class GameServer extends Thread
 {
+    private static final Logger logger = Logger.getLogger(String.valueOf(GameServer.class));
+
     private GameManager gm;
     private DatagramSocket socket;
     private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
@@ -22,7 +26,7 @@ public class GameServer extends Thread
             this.gm = gm;
             this.socket = new DatagramSocket(1331);
         } catch (SocketException e) {
-            e.printStackTrace();
+            logger.finest("Port is used "+ e);
         }
     }
 
@@ -33,7 +37,7 @@ public class GameServer extends Thread
             try {
                 socket.receive(packet);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.finest("Don't receive "+ e);
             }
             parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
             String message = new String(packet.getData());
@@ -59,7 +63,7 @@ public class GameServer extends Thread
 
             case DISCONNECT:
                 packet = new Packet01Disconnect(data);
-                System.out.println("["+address.getHostAddress()+":"+port+"] "+((Packet01Disconnect)packet).getUsername() + " has left!");
+                logger.info("["+address.getHostAddress()+":"+port+"] "+((Packet01Disconnect)packet).getUsername() + " has left!");
                 this.removeConnection(((Packet01Disconnect)packet));
                 break;
 
@@ -90,7 +94,7 @@ public class GameServer extends Thread
             } else {
                 sendData(packet.getData(), p.ipAddress, p.port);
                 // Send to other players that a player has connected.
-                System.out.println("Data before:" + new String(packet.getData()));
+                logger.info("Data before:" + new String(packet.getData()));
                 Packet00Login sendPacket = new Packet00Login(p.getUsername(), p.getPosX(), p.getPosY());
                 sendData(sendPacket.getData(), player.ipAddress, player.port);
             }
@@ -109,14 +113,14 @@ public class GameServer extends Thread
     }
 
     private void handleLogin(Packet00Login packet, InetAddress address, int port){
-        System.out.println("["+address.getHostAddress()+":"+port+"] "+(packet).getUsername() + " has connected!");
+        logger.info("["+address.getHostAddress()+":"+port+"] "+(packet).getUsername() + " has connected!");
         try {
             PlayerMP player = null;
             player = new PlayerMP((int)packet.getX(), (int)packet.getY(), (packet).getUsername(), address, port);
-            System.out.println(player.getUsername()+"'s location is:" + player.getPosX()+","+player.getPosY());
+            logger.info(player.getUsername()+"'s location is:" + player.getPosX()+","+player.getPosY());
             this.addConnection(player, (packet));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.finest("Player doesn't connected!" + e);
         }
     }
 
@@ -163,7 +167,7 @@ public class GameServer extends Thread
         try {
             socket.send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.finest("Data don't send " + e);
         }
     }
 
