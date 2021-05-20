@@ -71,6 +71,12 @@ public class Window {
 
 //        pw = img.getPixelWriter();
     }
+    public Window(GameContainer gc) {
+        width = gc.getWidth();
+        height = gc.getHeight();
+        pixel = new int[(int)(width*height*gc.getScale()*gc.getScale())];
+        gameCanvas = new Canvas(width*gc.getScale(), height*gc.getScale());
+    }
 
     /**
      * THe function that updates the contents of the window.
