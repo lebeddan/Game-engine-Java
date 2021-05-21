@@ -65,9 +65,9 @@ public class Renderer {
 
             @Override
             public int compare(ImageRequest o1, ImageRequest o2) {
-                if(o1.zDepth < o2.zDepth)
+                if(o1.getzDepth() < o2.getzDepth())
                     return -1;
-                if(o1.zDepth> o2.zDepth)
+                if(o1.getzDepth()> o2.getzDepth())
                     return 1;
                 return 0;
             }
@@ -75,9 +75,9 @@ public class Renderer {
 
         for(int i = 0; i < imageRequest.size(); i++){
             ImageRequest ir = imageRequest.get(i);
-            setzDepth(ir.zDepth);
+            setzDepth(ir.getzDepth());
 //            ir.image.setAlpha(false);
-            drawImage(ir.image, ir.offX, ir.offY);
+            drawImage(ir.getImage(), ir.getOffX(), ir.getOffY());
         }
 
 //        for(int i =0; i < lightRequest.size(); i++){
@@ -338,6 +338,9 @@ public class Renderer {
                 final int j = ((int) (m * cos + n * sin)) + centerx;
                 final int k = ((int) (n * cos - m * sin)) + centery;
                 if (j >= 0 && j < image.getTileW() && k >= 0 && k < image.getTileH()) {
+                    if(image.getPixels().length == 0){
+                        System.out.println("ASDasd");
+                    }
                     setPixel(x + offX, y + offY, image.getPixels()[(k+ tileY * image.getTileH()) * image.getWidth() + (j+tileX * image.getTileW())]);
                 }
 

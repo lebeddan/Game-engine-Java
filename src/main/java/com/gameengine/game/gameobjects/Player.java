@@ -4,6 +4,7 @@ package com.gameengine.game.gameobjects;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Input;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import com.gameengine.game.server.packets.Packet02Move;
@@ -14,16 +15,13 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class Player extends GameObject{
-    /**
-     * TODO: Add some powerup's.
-     */
 
     /**
      * Path to sprites.
      */
-    private String pathTankImage = "src/main/resources/Player/MagicTank.png";
-    private String pathGunImage = "src/main/resources/Player/MagicTankBarrel.png";
-    private String pathToBullet = "src/main/resources/Tile/magicball.png";
+    private String pathTankImage = "/Player/MagicTank.png";
+    private String pathGunImage = "/Player/MagicTankBarrel.png";
+    private String pathToBullet = "/Tile/magicball.png";
 
     /**
      * Parameters for rotation and animation of sprites.
@@ -36,15 +34,14 @@ public class Player extends GameObject{
     private Point2D zeroPos = Point2D.ZERO;
     private Point2D tankAxis;
     private Point2D gunAxis;
-    private Point2D muzzleAxis;
     private String username;
     private Input input;
+    private boolean menuOpen = false;
 
     /**
      * Position of player.
      */
     private float offX, offY;
-    private int tileX, tileY; // position X, Y
     private float lastMPos, lastRot;
 
     /**
@@ -60,11 +57,15 @@ public class Player extends GameObject{
     private boolean isMoving, isMRotating, isRotating;
     private Point2D centerPoint;
 
+    private SoundClip fireSound = new SoundClip("/Sounds/zapSound.wav", "clip");
+    private SoundClip deathSound = new SoundClip("/Sounds/gameOver.wav", "clip");
+
     /**
      * Auxiliary parameters.
      */
     private long lastShootTime; // shooting delay
     private float mousePosRot;
+    private boolean playerKilled;
 
     /**
      * Constructs a player object.
@@ -74,16 +75,17 @@ public class Player extends GameObject{
      * @throws IOException
      */
     public Player(int posX, int posY, String username, Input input) throws IOException {
-        // Calculating X,Y axis start
+        fireSound.setVolume(0.4);
+        deathSound.setVolume(0.4);
+
         this.username = username;
         this.input = input;
         playerSprite = new ImageTile(pathTankImage, 32, 32, 3);
         gunSprite = new ImageTile(pathGunImage, 32, 32, 3);
         bulletSprite = new ImageTile(pathToBullet, 32,32, 2);
+
         this.shape = "circle";
         this.tag = username;
-        this.tileX = posX;
-        this.tileY = posY;
         this.rotation = 0;
         this.offX = 0;
         this.offY = 0;
@@ -100,17 +102,20 @@ public class Player extends GameObject{
         ammoMax = 1000000;
         lastShootTime = 0;
         turnspeed = 3;
-        power = 1;
+        power = 6;
         angularDrag = (float)0.9;
         drag = (float)0.9;
-        MaxSpeed = 50;
-
+        MaxSpeed = 80;
     }
 
 
     @Override
     public void update(GameContainer gc, GameManager gm, float dt) {
         if(input != null) {
+            if(input.isKeyUp(KeyEvent.VK_ESCAPE)){
+                openMenu(gm);
+            }
+
             /**
              * Left right start.
              */
@@ -192,8 +197,6 @@ public class Player extends GameObject{
             }
 
             mousePosRot = (float)Math.toDegrees(Math.atan2(mousePosY - gunAxis.getY(), mousePosX - gunAxis.getX()));
-            //        muzzleAxis = zeroPos.add((gunAxis.getX()+ gunSprite.getTileH()/2)*Math.cos(Math.toRadians(mousePosRot)),
-            //                (gunAxis.getY())*Math.sin(Math.toRadians(mousePosRot)));
             /**
              * Mouse position for rotate gun and shooting end.
              */
@@ -208,7 +211,6 @@ public class Player extends GameObject{
                     packet.writeData(gm.socketClient);
                     lastShootTime = System.currentTimeMillis();
                     ammoMax--;
-                    System.out.println("Ammo: " + ammoMax);
                 }
             }
         }
@@ -245,13 +247,6 @@ public class Player extends GameObject{
          */
 
         gm.check_collisions(this);
-
-//        Point2D playerPos = gm.check_radius(this, detection_radius);
-//        if(playerPos != null){
-//            enemy_goes_to_Player(playerPos);
-//            enemy_shoots_player(playerPos);
-//
-//        }
 
         // Send move packet
         if(isMoving || isMRotating || isRotating){
@@ -312,22 +307,47 @@ public class Player extends GameObject{
          */
     }
 
+    private void openMenu(GameManager gm) {
+        if(menuOpen) {
+            gm.showPMenu();
+            menuOpen = false;
+        } else {
+            gm.showPMenu();
+            menuOpen = true;
+        }
+    }
+
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawImageTile(playerSprite, (int) posX, (int) posY, (int) 0, 0, rotation, tankAxis);
-        r.drawImageTile(gunSprite, (int) (posX+ tankAxis.getX()- gunSprite.getTileW()/2), (int) ((int) posY-2), (int) 0, 0, mousePosRot+90, gunAxis);
-        r.drawText(username, (int)posX + width/4, (int)posY-height/4, 0xffffffff);
-        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radius,0x99ff0000);
+        if(!playerKilled) {
+            r.drawImageTile(playerSprite, (int) posX, (int) posY, (int) 0, 0, rotation, tankAxis);
+            r.drawImageTile(gunSprite, (int) (posX + tankAxis.getX() - gunSprite.getTileW() / 2), (int) ((int) posY - 2), (int) 0, 0, mousePosRot + 90, gunAxis);
+            r.drawText(username, (int) posX + width / 4, (int) posY - height / 4, 0xffffffff);
+//            r.drawFillCirc((int) (posX + centerPoint.getX()), (int) (posY + centerPoint.getY()), radius, 0x99ff0000);
+        }
 
     }
 
     @Override
-    public void hit(GameObject obj) {
-        posX -= offX * 2;
-        posY -= offY * 2;
-        offX = 0;
-        offY = 0;
+    public void hit(GameObject obj, GameManager gm) {
+        if(obj instanceof Bullet) {
+            if(!playerKilled) {
+                playerDead(gm);
+            }
+        } else {
+            posX -= offX * 2;
+            posY -= offY * 2;
+            offX = 0;
+            offY = 0;
+        }
+    }
+
+    private void playerDead(GameManager gm) {
+        input = null;
+        deathSound.play();
+        gm.showDeathMenu();
+        this.playerKilled = true;
     }
 
     @Override
@@ -349,5 +369,6 @@ public class Player extends GameObject{
 
     public void fireBullet(GameManager gm){
         gm.addObject(new Bullet(mousePosRot, posX + (int) tankAxis.getX(), posY + (int) tankAxis.getY(), username, bulletSprite));
+        fireSound.play();
     }
 }

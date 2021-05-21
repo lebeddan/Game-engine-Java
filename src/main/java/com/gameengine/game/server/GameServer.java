@@ -17,10 +17,12 @@ public class GameServer extends Thread
     private DatagramSocket socket;
     private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 
-    public GameServer(GameManager gm){
+    public GameServer(GameManager gm, String IP){
         try {
             this.gm = gm;
-            this.socket = new DatagramSocket(1331);
+            this.socket = new DatagramSocket(null);
+            InetSocketAddress address = new InetSocketAddress(IP, 1331);
+            socket.bind(address);
         } catch (SocketException e) {
             e.printStackTrace();
         }

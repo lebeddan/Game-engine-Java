@@ -80,7 +80,6 @@ public class GameClient extends Thread
     private void handleBullet(Packet03Bullet packet){
         PlayerMP player = (PlayerMP) this.gm.getObject(packet.getUsername());
         if(!gm.getUsername().equals(player.getUsername())) {
-            System.out.println("[" + player.port + "]" + "Sent a bullet: " + this.socket.getLocalPort() + " " + player.port);
             System.out.println(this.socket.getLocalPort());
             player.fireBullet(gm);
         }

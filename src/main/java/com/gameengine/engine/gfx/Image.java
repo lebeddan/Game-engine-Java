@@ -57,7 +57,7 @@ public class Image {
      * @param path - the current path of the image file
      * */
     public Image(String path) throws IOException {
-        javafx.scene.image.Image image = new javafx.scene.image.Image(new File(path).toURI().toString());
+        javafx.scene.image.Image image = new javafx.scene.image.Image(this.getClass().getResource(path).toExternalForm());
 
         width = (int)image.getWidth();
         height = (int)image.getHeight();
@@ -83,7 +83,7 @@ public class Image {
     }
 
     public Image(String path, float scale) throws IOException {
-        javafx.scene.image.Image image = new javafx.scene.image.Image(new File(path).toURI().toString());
+        javafx.scene.image.Image image = new javafx.scene.image.Image(this.getClass().getResource(path).toExternalForm());
 
         width = (int)image.getWidth()*(int)scale;
         height = (int)image.getHeight()*(int)scale;

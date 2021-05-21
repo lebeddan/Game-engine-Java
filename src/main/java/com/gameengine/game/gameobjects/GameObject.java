@@ -18,7 +18,7 @@ public abstract class GameObject {
 
     public abstract void update(GameContainer gc, GameManager gm, float dt);
     public abstract void render(GameContainer gc, Renderer r);
-    public abstract void hit(GameObject obj);
+    public abstract void hit(GameObject obj, GameManager gm);
     public abstract Point2D getCenter();
 
     public String getTag() {

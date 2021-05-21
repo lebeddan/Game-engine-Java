@@ -5,62 +5,50 @@ package com.gameengine.engine.audio;
  * Used in Game Container.
  * @author Lebedev Daniil
  */
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
 import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 
 public class SoundClip {
     private Clip clip = null; // Any sound in a game
     private FloatControl gainControl; // Controller of volume
 
+    private MediaPlayer mediaPlayer;
+    private AudioClip audioPlayer;
+
+    private String type;
+
     /*
      * Constructs an sound file object.
      * This public constructor is used for create a sound clip
      * @param path - the current path of the sound clip file
      * */
-    public SoundClip(String path){
-        try {
-            InputStream audioSrc = SoundClip.class.getResourceAsStream(path);
-            InputStream bufferedIn = new BufferedInputStream(audioSrc);
-
-            if(audioSrc == null){
-                System.out.println("SADDDDDDDD");
-            }
-
-            AudioInputStream audioINStream = AudioSystem.getAudioInputStream(bufferedIn);
-            AudioFormat baseFormat = audioINStream.getFormat();
-            AudioFormat decodeFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-                    baseFormat.getSampleRate(),
-                    16, baseFormat.getChannels(),
-                    baseFormat.getChannels() * 2,
-                    baseFormat.getSampleRate(),
-                    false);
-
-            AudioInputStream decodeAudioINStream = AudioSystem.getAudioInputStream(decodeFormat, audioINStream);
-
-            clip = AudioSystem.getClip();
-            clip.open(decodeAudioINStream);
-
-            gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e){
-            e.printStackTrace();
+    public SoundClip(String path, String type){
+        this.type = type.toLowerCase();
+        if(type.equalsIgnoreCase("clip")){
+            this.audioPlayer = new AudioClip(this.getClass().getResource(path).toExternalForm());
+        } else {
+            Media sound = new Media(this.getClass().getResource(path).toExternalForm());
+            this.mediaPlayer = new MediaPlayer(sound);
         }
     }
-
     /*
      * Play a sound clip.
      */
     public void play(){
-        if (clip == null){
-            return;
-        }
-
-        stop();
-        clip.setFramePosition(0); // Setting beginning of a clip
-        while(!clip.isRunning()){
-            clip.start();
+        if(type.equals("clip")){
+            this.audioPlayer.play();
+        } else {
+            this.mediaPlayer.play();
         }
     }
 
@@ -68,41 +56,51 @@ public class SoundClip {
      * Stop a sound clip.
      */
     public void stop(){
-        if(clip.isRunning()){
-            clip.stop();
+        if(type.equals("clip")) {
+            this.audioPlayer.stop();
+        } else {
+            this.mediaPlayer.stop();
         }
-    }
-
-    /*
-     * Close a sound clip.
-     */
-    public void close(){
-        stop();
-        clip.drain();
-        clip.close();
     }
 
     /*
      * Playing a background music.
      */
     public void loop(){
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        play();
+        this.mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.seek(Duration.ZERO);
+                mediaPlayer.play();
+            }
+        });
     }
 
 
     /*
      * Set a volume of any sound/backqround music in a game.
      */
-    public void setVolume(float vlaue){
-        gainControl.setValue(vlaue);
+    public void setVolume(double value){
+        if(type.equals("clip")) {
+            this.audioPlayer.setVolume(value);
+        } else {
+            this.mediaPlayer.setVolume(value);
+        }
     }
 
+    public void addVolume(float value){
+        if(type.equals("clip")) {
+            this.audioPlayer.setVolume(this.audioPlayer.getVolume() + value);
+        } else {
+            this.mediaPlayer.setVolume(this.mediaPlayer.getVolume() + value);
+        }
+    }
 
-    /*
-     * Check if is a sound clip is running.
-     */
-    public boolean isRunning() {
-        return clip.isRunning();
+    public double getVolume(){
+        if(type.equals("clip")) {
+            return this.audioPlayer.getVolume();
+        } else {
+            return this.mediaPlayer.getVolume();
+        }
     }
 }
