@@ -12,12 +12,10 @@ import java.io.IOException;
 
 public class Tree extends GameObject {
 
-    private ImageTile treeSprite = new ImageTile("src/main/resources/Tile/myspritesheet.png", 32, 32, 4);
-    private ImageTile hitSprite = new ImageTile("src/main/resources/Tile/hit_effect.png", 32, 32, 3);
-    private ImageTile deathSprite = new ImageTile("src/main/resources/Tile/explosion.png", 64, 64, 2);
+    private ImageTile treeSprite = new ImageTile("/Tile/myspritesheet.png", 32, 32, 4);
+    private ImageTile hitSprite = new ImageTile("/Tile/hit_effect.png", 32, 32, 3);
+    private ImageTile deathSprite = new ImageTile("/Tile/explosion.png", 64, 64, 2);
     private int hp = 3;
-    private int death_frames = 30;
-    private int hit_frames = 5;
     private float animX, animY = 0;
     private float hit_animX, hit_animY = 0;
     private boolean hit_anim = false;
@@ -56,7 +54,7 @@ public class Tree extends GameObject {
     }
 
     @Override
-    public void hit(GameObject obj) {
+    public void hit(GameObject obj, GameManager gm) {
         if(obj.getClass() == Bullet.class){
             bullet_hit();
         }

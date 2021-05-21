@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.List;
 
 public class TiledMap {
@@ -27,8 +25,8 @@ public class TiledMap {
     private String version;
     private int width;
 
-    public TiledMap(boolean infinite){
-        this.infinite = true;
+    public TiledMap(){
+
     }
 
 //    public TiledMap(int compressionLevel, int height, boolean infinite, List<Map> layers, int nextlayerid, int nextobjectid, String orientation, String renderorder, String tiledversion, int tileheight, List tilesets, int tilewidth, String type, String version, int width) {
@@ -49,18 +47,15 @@ public class TiledMap {
 //        this.width = width;
 //    }
 
-    public static Map create_map(String path, GameManager gm){
+    public Map create_map(String path, GameManager gm){
         Gson gson = new Gson();
         TiledMap tile = null;
         Map map = null;
-        try {
-            Reader reader = new FileReader(path);
+            InputStream in = getClass().getResourceAsStream(path);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             tile = gson.fromJson(reader, TiledMap.class);
             JsonElement jse = tile.layers.getAsJsonArray().get(1).getAsJsonObject().get("data");
             map = new Map(tile.layers.getAsJsonArray().get(0), jse, gm);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         return map;
     }
 }

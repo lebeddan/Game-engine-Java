@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class CustomTextField extends TextField {
-    private final String FONT_PATH = "src/main/resources/GUI/8bitlim.ttf";
+    private final String FONT_PATH = "/GUI/8bitlim.ttf";
     private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent;" +
             " -fx-background-image: url('GUI/textField.png'); -fx-prompt-text-fill: #B0453E";
 
@@ -20,11 +20,7 @@ public class CustomTextField extends TextField {
     }
 
     private void setFont(){
-        try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 35));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            setAlignment(Pos.TOP_CENTER);
-        }
+            setFont(Font.loadFont(this.getClass().getResource(FONT_PATH).toExternalForm(), 35));
+        setAlignment(Pos.TOP_CENTER);
     }
 }

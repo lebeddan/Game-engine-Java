@@ -189,7 +189,7 @@ public class Tank extends GameObject {
     }
 
     @Override
-    public void hit(GameObject obj) {
+    public void hit(GameObject obj, GameManager gm) {
         posX -= offX;
         posY -= offY;
         offX = 0;

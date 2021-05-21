@@ -15,21 +15,22 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class CustomButton extends Button {
-    private final String FONT_PATH = "src/main/resources/GUI/8bitlim.ttf";
+    private final String FONT_PATH = "/GUI/8bitlim.ttf";
 
     private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent;" +
             " -fx-background-image: url('GUI/Buttondown.png');";
     private final String BUTTON_FREE_STYLE = "-fx-background-color: transparent;" +
             " -fx-background-image: url('GUI/Buttonup.png');";
 
-    private SoundClip select = new SoundClip("src/main/resources/Sounds/buttonSelect.wav", "clip");
-    private SoundClip click = new SoundClip("src/main/resources/Sounds/buttonClick.wav", "clip");
+    private SoundClip select = new SoundClip("/Sounds/buttonSelect.wav", "clip");
+    private SoundClip click = new SoundClip("/Sounds/buttonClick.wav", "clip");
 
     public CustomButton(String text) {
         setFont();
         setPrefWidth(260);
         setPrefHeight(76);
         setText(text);
+        setDefaultButton(true);
         setStyle(BUTTON_FREE_STYLE);
         initButtonListeners();
         click.setVolume(0.3);
@@ -37,12 +38,8 @@ public class CustomButton extends Button {
     }
 
     private void setFont(){
-        try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 35));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            setAlignment(Pos.TOP_CENTER);
-        }
+        setFont(Font.loadFont(this.getClass().getResource(FONT_PATH).toExternalForm(), 35));
+        setAlignment(Pos.TOP_CENTER);
     }
 
     private void setButtonPressedStyle(){

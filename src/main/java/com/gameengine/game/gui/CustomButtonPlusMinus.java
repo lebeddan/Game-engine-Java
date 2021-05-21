@@ -18,8 +18,8 @@ public class CustomButtonPlusMinus extends CustomButton{
     private final String BUTTON_PRESSED_STYLE_PLUS = "-fx-background-color: transparent;" +
             " -fx-background-image: url('GUI/plusbuttondown.png');";
 
-    private SoundClip select = new SoundClip("src/main/resources/Sounds/buttonSelect.wav", "clip");
-    private SoundClip click = new SoundClip("src/main/resources/Sounds/buttonClick.wav", "clip");
+    private SoundClip select = new SoundClip("/Sounds/buttonSelect.wav", "clip");
+    private SoundClip click = new SoundClip("/Sounds/buttonClick.wav", "clip");
 
     private String type;
 

@@ -4,6 +4,7 @@ import com.gameengine.engine.AbstractGame;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
 import com.gameengine.engine.audio.SoundClip;
+import com.gameengine.game.gui.GameStage;
 import com.gameengine.game.gui.ViewManager;
 import com.gameengine.game.gameobjects.Camera;
 import com.gameengine.game.gameobjects.Enemy;
@@ -21,14 +22,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +50,11 @@ public class GameManager extends AbstractGame {
     private int cur_chunk;
     private GameContainer gc;
 
-    private SoundClip bgMusic = new SoundClip("src/main/resources/Sounds/gameBGmusic.mp3", "bg");
+    private Stage stage;
+    private GameStage gameStage;
+    private ViewManager viewManager;
+
+    private SoundClip bgMusic = new SoundClip("/Sounds/gameBGmusic.mp3", "bg");
 
     public GameManager() throws IOException {
 //        startGame();
@@ -71,11 +72,13 @@ public class GameManager extends AbstractGame {
         gc.setHeight(720);
         gc.setScale(1);
         gc.start();
-        Scene gameScene = gc.getWindow().getMainScene();
+        gameStage = new GameStage(gc, this);
+//        Scene gameScene = gc.getWindow().getMainScene();
+//        gameStage.setScene(gameScene);
 //        Stage gameStage = new Stage();
 //        gameStage.setScene(gameScene);
 //        stage.hide();
-        stage.setScene(gc.getWindow().getMainScene());
+//        this.stage.setScene(gc.getWindow().getMainScene());
 
 //        System.out.println("Do you want to start a server?");
 //        Scanner scanner = new Scanner(System.in);
@@ -88,7 +91,7 @@ public class GameManager extends AbstractGame {
         socketClient = new GameClient(IP, this);
         socketClient.start();
 
-        loadLevel("src/main/resources/Maps/maptilesettest.json");
+        loadLevel("/Maps/maptilesettest.json");
 
 //        System.out.println("Your username: ");
 //        username = scanner.nextLine();
@@ -103,8 +106,8 @@ public class GameManager extends AbstractGame {
 
         camera = new Camera(username);
 //        stage.hide();
-        stage.show();
-        getObjects().add(new Enemy(10, 10, this));
+//        gameStage.show();
+        getObjects().add(new Enemy(12, 10, this));
 //        gameStage.show();
     }
 
@@ -118,6 +121,18 @@ public class GameManager extends AbstractGame {
         System.exit(0);
     }
 
+    public void showPMenu(){
+        if(gameStage.isHidden()){
+            gameStage.showPauseMenu();
+        } else {
+            gameStage.hidePauseMenu();
+        }
+    }
+
+    public static void main(){
+        launch();
+    }
+
     @FXML
     public void exitApplication(ActionEvent e){
         Platform.exit();
@@ -127,11 +142,12 @@ public class GameManager extends AbstractGame {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Tank Souls");
 //        gc.getRenderer().setAmbientColor(-1);
-        ViewManager manager = new ViewManager(this, stage);
-        stage = manager.getMainStage();
+        viewManager = new ViewManager(this, stage);
+        stage = viewManager.getMainStage();
 //        stage.setScene(gc.getWindow().getMainScene());
 //        startGame(stage, "vas", true);
-        stage.show();
+        this.stage = stage;
+        this.stage.show();
     }
 
     @Override
@@ -141,7 +157,8 @@ public class GameManager extends AbstractGame {
     }
 
     public void loadLevel(String path) throws IOException {
-        map = TiledMap.create_map(path, this);
+        TiledMap tm = new TiledMap();
+        map = tm.create_map(path, this);
         loaded_chunks = new ArrayList<Chunk>();
         loaded_chunks.add(map.get_chunk(0));
 
@@ -296,7 +313,7 @@ public class GameManager extends AbstractGame {
         for(Chunk chunk : loaded_chunks) {
             ArrayList<GameObject> arr = new ArrayList<>(chunk.getObjects());
             for(GameObject ob : objects){
-                if(ob instanceof PlayerMP && mainObj != ob){
+                if((ob instanceof PlayerMP && mainObj != ob) || ob instanceof Enemy){
                     arr.add(ob);
                 }
             }
@@ -320,8 +337,8 @@ public class GameManager extends AbstractGame {
                     Point2D closest = Point2D.ZERO.add(aabb.getX() + diffClampX, aabb.getY() + diffClampY);
 
                     if(closest.distance(center) < mainObj.getRadius()){
-                        obj.hit(mainObj);
-                        mainObj.hit(obj);
+                        obj.hit(mainObj, this);
+                        mainObj.hit(obj, this);
                     }
 
 
@@ -330,8 +347,8 @@ public class GameManager extends AbstractGame {
                     Point2D mainCent = Point2D.ZERO.add(mainObj.getPosX()+mainObj.getCenter().getX(), mainObj.getPosY()+mainObj.getCenter().getY());
                     Point2D objCent = Point2D.ZERO.add(obj.getPosX()+obj.getCenter().getX(), obj.getPosY()+obj.getCenter().getY());
                     if(mainCent.distance(objCent) < (mainObj.getRadius()+obj.getRadius())){
-                        obj.hit(mainObj);
-                        mainObj.hit(obj);
+                        obj.hit(mainObj, this);
+                        mainObj.hit(obj, this);
                     }
                 } else if (obj.getShape().equals("someShape")){
                     boolean collisionX = (mainObj.getPosX() + mainObj.getWidth() >= obj.getPosX()) && (obj.getPosX() + obj.getWidth() >= mainObj.getPosX());
@@ -340,8 +357,8 @@ public class GameManager extends AbstractGame {
                     if (collisionX && collisionY) {
                         System.out.println("Nice");
 //                        mainObj.dead = true;
-                        mainObj.hit(obj);
-                        obj.hit(mainObj);
+                        mainObj.hit(obj, this);
+                        obj.hit(mainObj, this);
                     }
                 }
             }
@@ -370,8 +387,8 @@ public class GameManager extends AbstractGame {
                     if (collisionX && collisionY) {
                         System.out.println("Nice");
 //                        mainObj.dead = true;
-                        mainObj.hit(obj);
-                        obj.hit(mainObj);
+                        mainObj.hit(obj, this);
+                        obj.hit(mainObj, this);
                     }
                 }
             }

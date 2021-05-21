@@ -19,7 +19,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class ViewManager {
     private static final int MENU_BUTTONS_START_X = 200;
     private static final int MENU_BUTTONS_START_Y = 150;
 
-    private SoundClip clip = new SoundClip("src/main/resources/Sounds/menuMusic.mp3", "bg");
+    private SoundClip clip = new SoundClip("/Sounds/menuMusic.mp3", "bg");
 
 //    private final SoundClip bgMusic = new SoundClip("gameOver.wav");
 
@@ -56,7 +55,7 @@ public class ViewManager {
     List<CustomButton> menuButton;
 
     public ViewManager(GameManager gm, Stage stage) throws IOException {
-        this.FONT = Font.loadFont("file:src/main/resources/GUI/pixelFont.ttf", 35);
+        this.FONT = Font.loadFont(this.getClass().getResource("/GUI/pixelFont.ttf").toExternalForm(), 35);
         this.gameStage = stage;
         this.gm = gm;
         mainPane = new AnchorPane();
@@ -69,9 +68,9 @@ public class ViewManager {
 //        MediaPlayer mediaPlayer = new MediaPlayer(sound);
 //        System.out.println(this.getClass().getResource("/Sounds/gameBGmusic.mp3").toExternalForm());
 
-        File f = new File("src/main/resources/Sounds/gameOver.wav");
+//        File f = new File("src/main/resources/Sounds/gameOver.wav");
 
-        System.out.println(f.toURI().toString());
+//        System.out.println(f.toURI().toString());
         clip.loop();
         clip.setVolume(0.5);
         clip.play();
@@ -380,7 +379,7 @@ public class ViewManager {
 
     private void createBackground() throws MalformedURLException {
 //        Image backgroundImage = new Image(f.toURI().toString(), 1280, 720, false, true);
-        Image backgroundImage = new Image("file:src/main/resources/GUI/bg.png");
+        Image backgroundImage = new Image("/GUI/bg.png");
 
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT,
                 BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
@@ -393,7 +392,7 @@ public class ViewManager {
     }
 
     private void createLogo(){
-        Image logoim = new Image("file:src/main/resources/GUI/gameLogog.png", 366, 282, false, true);
+        Image logoim = new Image("/GUI/gameLogog.png", 366, 282, false, true);
         ImageView logo = new ImageView(logoim);
         logo.setLayoutX(700);
         logo.setLayoutY(100);

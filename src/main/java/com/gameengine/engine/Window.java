@@ -1,6 +1,5 @@
 package com.gameengine.engine;
 
-import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.Group;
@@ -8,12 +7,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 
-import javafx.scene.image.*;
-
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.BorderPane;
-
-import java.nio.IntBuffer;
+import javafx.scene.layout.AnchorPane;
 
 /**
  * Main class that creates the displayed window.
@@ -28,6 +23,7 @@ public class Window {
     private PixelFormat intArgbPreInstance = PixelFormat.getIntArgbPreInstance();
     private Canvas gameCanvas;
     private Scene mainScene;
+    private AnchorPane mainPane;
     private Group gameGroup;
 
     private int[] pixel;
@@ -47,20 +43,22 @@ public class Window {
         pixel = new int[(int)(width*height*gc.getScale()*gc.getScale())];
         finalPixel = new int[(int)(width*gc.getScale()*height*gc.getScale())];
         gameCanvas = new Canvas(width*gc.getScale(), height*gc.getScale());
-        BorderPane borderPane = new BorderPane();
+        mainPane = new AnchorPane();
+        mainPane.getChildren().add(gameCanvas);
+//        pMenu = new PauseMenu(gc);
+//        mainPane.getChildren().add(pMenu);
 
 //        ImageView imageView = new ImageView();
 //        imageView.setPreserveRatio(true);
 //        imageView.setImage(img);
 
-        borderPane.setCenter(gameCanvas);
 
 //        borderPane.setCenter(imageView);
 
 //        gameCanvas.setCache(true);
 //        gameCanvas.setCacheHint(CacheHint.SPEED);
 
-        mainScene = new Scene(borderPane);
+        mainScene = new Scene(mainPane);
 
         gctx = gameCanvas.getGraphicsContext2D();
 
@@ -82,6 +80,10 @@ public class Window {
 
     public Scene getMainScene(){
         return mainScene;
+    }
+
+    public AnchorPane getMainPane(){
+        return mainPane;
     }
 
     public Canvas getCanvas() {

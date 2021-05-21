@@ -35,9 +35,9 @@ public class SoundClip {
     public SoundClip(String path, String type){
         this.type = type.toLowerCase();
         if(type.equalsIgnoreCase("clip")){
-            this.audioPlayer = new AudioClip(new File(path).toURI().toString());
+            this.audioPlayer = new AudioClip(this.getClass().getResource(path).toExternalForm());
         } else {
-            Media sound = new Media(new File(path).toURI().toString());
+            Media sound = new Media(this.getClass().getResource(path).toExternalForm());
             this.mediaPlayer = new MediaPlayer(sound);
         }
     }

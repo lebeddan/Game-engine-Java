@@ -165,4 +165,8 @@ public class GameContainer implements Runnable{
     public Input getInput() {
         return input;
     }
+
+    public AbstractGame getGame(){
+        return game;
+    }
 }

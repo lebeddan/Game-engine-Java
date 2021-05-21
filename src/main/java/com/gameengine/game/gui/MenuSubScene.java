@@ -10,7 +10,7 @@ import javafx.util.Duration;
 
 public class MenuSubScene extends SubScene {
 
-    private final String BACKGROUND_IMAGE = "file:src/main/resources/GUI/pane.png";
+    private final String BACKGROUND_IMAGE = "/GUI/pane.png";
 
     private boolean isHidden = true;
 
@@ -27,6 +27,23 @@ public class MenuSubScene extends SubScene {
 
         setLayoutX(1280);
         setLayoutY(130);
+
+        isHidden = true;
+    }
+
+    public MenuSubScene(int i) {
+        super(new AnchorPane(), 640, 420);
+        prefHeight(640);
+        prefWidth(420);
+
+        BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, 640, 420, false, true),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
+
+        AnchorPane root2 = (AnchorPane) this.getRoot();
+        root2.setBackground(new Background(image));
+
+        setLayoutX(320);
+        setLayoutY(200);
 
         isHidden = true;
     }

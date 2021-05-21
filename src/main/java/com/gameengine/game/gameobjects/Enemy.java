@@ -3,6 +3,8 @@ import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
+import com.gameengine.game.gameobjects.world.Tree;
+import com.gameengine.game.gameobjects.world.Wall;
 import javafx.geometry.Point2D;
 
 import java.io.IOException;
@@ -13,9 +15,11 @@ public class Enemy extends GameObject{
     /**
      * Paths to sprites.
      */
-    private String pathEnemyImage = "src/main/resources/Player/MagicTank.png";
-    private String pathEnemyGunImage = "src/main/resources/Player/MagicTankBarrel.png";
-    private String pathEnemyBullet = "src/main/resources/Tile/magicball.png";
+    private String pathEnemyImage = "/Player/MagicTank.png";
+    private String pathEnemyGunImage = "/Player/MagicTankBarrel.png";
+    private String pathEnemyBullet = "/Tile/magicball.png";
+    private ImageTile hitSprite = new ImageTile("/Tile/hit_effect.png", 32, 32, 3);
+    private ImageTile deathSprite = new ImageTile("/Tile/explosion.png", 64, 64, 2);
 
     /**
      * Parameters for rotation and animation of sprites.
@@ -65,6 +69,10 @@ public class Enemy extends GameObject{
     private int num;
     private double den, cos;
     private GameManager gm;
+    private int hp = 3;
+    private float animX, animY = 0;
+    private float hit_animX, hit_animY = 0;
+    private boolean hit_anim = false;
 
     private int curPoint = 0;
     List<Point2D> patrolPoints;
@@ -264,26 +272,72 @@ public class Enemy extends GameObject{
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawImageTile(enemySprite, (int)posX, (int)posY, 0, 0, rotation, tankAxis);
-        r.drawImageTile(enemygunSprite, (int) (posX+ tankAxis.getX()- enemygunSprite.getTileW()/2), (int) ((int) posY-2),
-                (int) 0, 0, angle_now, gunAxis);
-        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radiusDetection,0x99ff0000);
+        if(deathAnimation) {
+            if (!hit) {
+                death_animation(r);
+            }
+        } else {
+            r.drawImageTile(enemySprite, (int) posX, (int) posY, 0, 0, rotation, tankAxis);
+            r.drawImageTile(enemygunSprite, (int) (posX + tankAxis.getX() - enemygunSprite.getTileW() / 2), (int) ((int) posY - 2),
+                    (int) 0, 0, angle_now, gunAxis);
+            r.drawFillCirc((int) (posX + centerPoint.getX()), (int) (posY + centerPoint.getY()), radiusDetection, 0x99ff0000);
+        }
+        if(hit_anim){
+            hit_animation(r);
+        }
 //        r.drawFillRect(0,0, 100, 100, 0x80ff0000);
     }
 
     @Override
-    public void hit(GameObject obj) {
-        Point2D mainCent = Point2D.ZERO.add(obj.getPosX()+obj.getCenter().getX(), obj.getPosY()+obj.getCenter().getY());
-        enemy_shoots_player(mainCent, gm);
-        System.out.println("Enenym shoots at: "+mainCent.getX() +" " + mainCent.getY());
+    public void hit(GameObject obj, GameManager gm) {
+        if(obj.getClass() ==  Bullet.class){
+            this.hp--;
+            if(hp == 0){
+                deathAnimation = true;
+            } else {
+                hit_anim = true;
+            }
+        } else {
+            Point2D mainCent = Point2D.ZERO.add(obj.getPosX() + obj.getCenter().getX(), obj.getPosY() + obj.getCenter().getY());
+            enemy_shoots_player(mainCent, gm);
+            System.out.println("Enenym shoots at: " + mainCent.getX() + " " + mainCent.getY());
+        }
         if(followingPlayer){
             posX -= offX*2;
             posY -= offY*2;
         }
-        posX -= offX*3;
-        posY -= offY*3;
-        offX = 0;
-        offY = 0;
+        if(obj instanceof Wall || obj instanceof Tree) {
+            posX -= offX * 3;
+            posY -= offY * 3;
+            offX = 0;
+            offY = 0;
+        }
+    }
+
+    private void hit_animation(Renderer r){
+        r.drawImageTile(hitSprite, (int) (posX)+12, (int) (posY)+14, (int)hit_animX, (int)hit_animY, 0);
+        hit_animX += 0.015 * 10;
+        if(hit_animX > 1){
+            hit_animX = 0;
+            hit_animY += 1;
+            if(hit_animY > 1){
+                hit_animY = 0;
+                hit_anim = false;
+            }
+        }
+    }
+
+    private void death_animation(Renderer r){
+        r.drawImageTile(deathSprite, (int) posX, (int) posY, (int)animX, (int)animY, 0);
+        animX += 0.015 * 10;
+        if(animX > 2){
+            animX = 0;
+            animY += 1;
+            if(animY > 2){
+                animY = 0;
+                this.dead = true;
+            }
+        }
     }
 
     @Override

@@ -32,13 +32,13 @@ public class Input{
         mouseY = 0;
         scroll = 0;
 
-        mainScene.setOnMousePressed(mouseEvent -> {
-            mousePressed(mouseEvent);
-        });
-
-        mainScene.setOnMouseReleased(mouseEvent -> {
-            mouseReleased(mouseEvent);
-        });
+//        mainScene.setOnMousePressed(mouseEvent -> {
+//            mousePressed(mouseEvent);
+//        });
+//
+//        mainScene.setOnMouseReleased(mouseEvent -> {
+//            mouseReleased(mouseEvent);
+//        });
 
         mainScene.setOnKeyPressed(keyEvent -> {
             keyPressed(keyEvent);

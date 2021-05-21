@@ -3,6 +3,7 @@ package com.gameengine.game.mapobjects;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,19 +36,27 @@ public class Map {
 
     {
         try {
-            tileSet = new ImageTile("src/main/resources/Tile/myspritesheet.png", 16, 16,tile_size/16);
+            tileSet = new ImageTile("/Tile/myspritesheet.png", 16, 16,tile_size/16);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     Type listType = new TypeToken<List<Integer>>() {}.getType();
+    public Map(){
+
+    }
 
     public Map(JsonElement list, JsonElement jse, GameManager gm){
         this.gm = gm;
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Map.class, new MapAdapter());
+        builder.setPrettyPrinting();
+        Gson gson = builder.create();
 //        System.out.println(gson.fromJson(list, Map.class).x);
-        Map mp = gson.fromJson(list, Map.class);
+        System.out.println(list);
+        Map mp = gson.fromJson(list.toString(), Map.class);
         chunks = new ArrayList<Chunk>(chunk_width*chunk_height);
         this.data = mp.data;
         this.height = mp.height;
@@ -130,4 +139,79 @@ public class Map {
         return chunk_height;
     }
 
+    public void setData(List<Integer> data) {
+        this.data = data;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(int opacity) {
+        this.opacity = opacity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

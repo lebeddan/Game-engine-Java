@@ -121,7 +121,7 @@ public class Bullet extends GameObject {
     }
 
     @Override
-    public void hit(GameObject obj) {
+    public void hit(GameObject obj, GameManager gm) {
 //        if(obj.getClass() == Tree.class){
             dead = true;
 //        }

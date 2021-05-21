@@ -22,9 +22,9 @@ public class Player extends GameObject{
     /**
      * Path to sprites.
      */
-    private String pathTankImage = "src/main/resources/Player/MagicTank.png";
-    private String pathGunImage = "src/main/resources/Player/MagicTankBarrel.png";
-    private String pathToBullet = "src/main/resources/Tile/magicball.png";
+    private String pathTankImage = "/Player/MagicTank.png";
+    private String pathGunImage = "/Player/MagicTankBarrel.png";
+    private String pathToBullet = "/Tile/magicball.png";
 
     /**
      * Parameters for rotation and animation of sprites.
@@ -40,6 +40,8 @@ public class Player extends GameObject{
     private Point2D muzzleAxis;
     private String username;
     private Input input;
+    private Input inputToBeSaved;
+    private boolean menuOpen = false;
 
     /**
      * Position of player.
@@ -61,13 +63,14 @@ public class Player extends GameObject{
     private boolean isMoving, isMRotating, isRotating;
     private Point2D centerPoint;
 
-    private SoundClip fireSound = new SoundClip("src/main/resources/Sounds/gameOver.wav", "clip");
+    private SoundClip fireSound = new SoundClip("/Sounds/gameOver.wav", "clip");
 
     /**
      * Auxiliary parameters.
      */
     private long lastShootTime; // shooting delay
     private float mousePosRot;
+    private boolean playerKilled;
 
     /**
      * Constructs a player object.
@@ -115,6 +118,9 @@ public class Player extends GameObject{
     @Override
     public void update(GameContainer gc, GameManager gm, float dt) {
         if(input != null) {
+            if(input.isKeyUp(KeyEvent.VK_ESCAPE)){
+                openMenu(gm);
+            }
             /**
              * Left right start.
              */
@@ -207,6 +213,7 @@ public class Player extends GameObject{
              * Shooting start.
              */
             if (input.isKey(KeyEvent.VK_SPACE)) {
+                System.out.println("ASD");
                 if (ammoMax > 0 && System.currentTimeMillis() - lastShootTime >= 300) {
                     fireBullet(gm);
                     Packet03Bullet packet = new Packet03Bullet(this.username, posX, posY, rotation);
@@ -317,26 +324,49 @@ public class Player extends GameObject{
          */
     }
 
+    private void openMenu(GameManager gm) {
+        if(menuOpen) {
+//            input = inputToBeSaved;
+            gm.showPMenu();
+            menuOpen = false;
+        } else {
+//            inputToBeSaved = input;
+//            input = null;
+            gm.showPMenu();
+            menuOpen = true;
+        }
+    }
+
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        r.drawImageTile(playerSprite, (int) posX, (int) posY, (int) 0, 0, rotation, tankAxis);
-        r.drawImageTile(gunSprite, (int) (posX+ tankAxis.getX()- gunSprite.getTileW()/2), (int) ((int) posY-2), (int) 0, 0, mousePosRot+90, gunAxis);
-        r.drawText(username, (int)posX + width/4, (int)posY-height/4, 0xffffffff);
-        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radius,0x99ff0000);
+        if(!playerKilled) {
+            r.drawImageTile(playerSprite, (int) posX, (int) posY, (int) 0, 0, rotation, tankAxis);
+            r.drawImageTile(gunSprite, (int) (posX + tankAxis.getX() - gunSprite.getTileW() / 2), (int) ((int) posY - 2), (int) 0, 0, mousePosRot + 90, gunAxis);
+            r.drawText(username, (int) posX + width / 4, (int) posY - height / 4, 0xffffffff);
+            r.drawFillCirc((int) (posX + centerPoint.getX()), (int) (posY + centerPoint.getY()), radius, 0x99ff0000);
+        }
 
     }
 
     @Override
-    public void hit(GameObject obj) {
+    public void hit(GameObject obj, GameManager gm) {
         if(obj instanceof Bullet) {
-
+            if(!playerKilled) {
+                playerDead(gm);
+            }
         } else {
             posX -= offX * 2;
             posY -= offY * 2;
             offX = 0;
             offY = 0;
         }
+    }
+
+    private void playerDead(GameManager gm) {
+        input = null;
+        gm.showPMenu();
+        this.playerKilled = true;
     }
 
     @Override
@@ -358,6 +388,6 @@ public class Player extends GameObject{
 
     public void fireBullet(GameManager gm){
         gm.addObject(new Bullet(mousePosRot, posX + (int) tankAxis.getX(), posY + (int) tankAxis.getY(), username, bulletSprite));
-        fireSound.play();
+//        fireSound.play();
     }
 }
