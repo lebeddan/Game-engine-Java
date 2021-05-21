@@ -10,6 +10,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServerTest {
+
     @Test
     void ServerNotNullTest() {
         GameManager gm = null;
