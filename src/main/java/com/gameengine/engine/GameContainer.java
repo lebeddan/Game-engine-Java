@@ -93,7 +93,6 @@ public class GameContainer implements Runnable{
                     long elapsedNanos = currentNanoTime - oldFrameTime ;
                     elapsedNanosPerFrame = elapsedNanos / frameTimes.length ;
                     frameRate = NINE_BIL / elapsedNanosPerFrame ;
-//                    System.out.println("Framerate: " + frameRate);
                 }
                 if(frameRate > 70){
                     elapsedNanosPerFrame = (long) (NINE_BIL/70);

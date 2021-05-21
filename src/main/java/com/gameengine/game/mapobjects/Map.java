@@ -46,7 +46,6 @@ public class Map {
 
     public Map(JsonElement list, JsonElement jse){
         Gson gson = new Gson();
-//        System.out.println(gson.fromJson(list, Map.class).x);
         Map mp = gson.fromJson(list, Map.class);
         chunks = new ArrayList<Chunk>(chunk_width*chunk_height);
         this.data = mp.data;
@@ -60,8 +59,7 @@ public class Map {
         this.x = mp.x;
         this.y = mp.y;
         setObjects(jse);
-//        System.out.println("HIII");
-        System.out.println(chunk_width);
+        logger.info(""+chunk_width);
         fill_chunks();
     }
 
@@ -84,7 +82,6 @@ public class Map {
 
         for(int ay = 0; ay < height; ay += chunk_height){
             for(int ax = 0; ax < width; ax += chunk_width){
-                //
                 for(int y = 0; y < chunk_height; y++){
                     for(int x = 0; x < chunk_width; x++){
                         chunk_tiles[x + y*chunk_width] = data.get((x+ax) + (ay+y)*width);

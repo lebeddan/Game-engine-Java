@@ -27,7 +27,6 @@ public class Chunk {
 
 
     public Chunk(int width, int height, int[] tiles, int[] objects_l, int chunk_num, Map map, ImageTile grasstileSprite) {
-//        System.out.println(Arrays.toString(tiles));
         this.width = width;
         this.height = height;
         this.pixel_foreground = new int[width*height];
@@ -37,7 +36,6 @@ public class Chunk {
         this.tileSize = map.getTile_size();
         this.posX = (chunk_num%map.getChunk_width())*(map.getTile_size()*map.get_cWidth());
         this.posY = (chunk_num/map.getChunk_width())*(map.getTile_size()*map.get_cHeight());
-//        System.out.println(posX + " " +posY);
         logger.info("GrassSprite height " + grasstileSprite.getTileH());
         imWidth = grasstileSprite.getWidth();
         int imTWidth = grasstileSprite.getWidth()/ grasstileSprite.getTileW();
@@ -50,7 +48,6 @@ public class Chunk {
                     number--;
                     for (int a = 0; a < grasstileSprite.getTileH(); a++) {
                         for (int b = 0; b < grasstileSprite.getTileW(); b++) {
-//                            System.out.println((b+x)+(a+y)*width);
                             pixel_foreground[(b + x) + (a + y) * width] =
                                     grasstileSprite.getPixels()[(b+(grasstileSprite.getTileW()*(number%imTWidth))) +
                                             (a+(grasstileSprite.getTileH()*(number/imTWidth))) * imWidth];

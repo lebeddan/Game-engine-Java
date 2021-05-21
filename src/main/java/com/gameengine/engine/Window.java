@@ -43,33 +43,16 @@ public class Window {
         width = gc.getWidth();
         height = gc.getHeight();
 
-//        intBuffer = IntBuffer.allocate(width * height);
-//        pixelBuffer = new PixelBuffer<>(width, height, intBuffer, intArgbPreInstance);
-//        WritableImage img = new WritableImage(pixelBuffer);
-
         pixel = new int[(int)(width*height*gc.getScale()*gc.getScale())];
         finalPixel = new int[(int)(width*gc.getScale()*height*gc.getScale())];
         gameCanvas = new Canvas(width*gc.getScale(), height*gc.getScale());
         BorderPane borderPane = new BorderPane();
-
-//        ImageView imageView = new ImageView();
-//        imageView.setPreserveRatio(true);
-//        imageView.setImage(img);
-
         borderPane.setCenter(gameCanvas);
-
-//        borderPane.setCenter(imageView);
-
-//        gameCanvas.setCache(true);
-//        gameCanvas.setCacheHint(CacheHint.SPEED);
-
         mainScene = new Scene(borderPane);
 
         gctx = gameCanvas.getGraphicsContext2D();
 
         pw = gctx.getPixelWriter();
-
-//        pw = img.getPixelWriter();
     }
     public Window(GameContainer gc) {
         width = gc.getWidth();

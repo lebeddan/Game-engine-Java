@@ -218,18 +218,13 @@ public class Renderer {
         offX -= camX;
         offY -= camY;
 
-//        if(image.isAlpha() && !processing){
-//            imageRequest.add(new ImageRequest(image, zDepth, offX, offY));
-//            return;
-//        }
 
         //Don't render code
         if(offX < -chunk.getWidth()){
-//            System.out.println("Not drawing chunk: " + chunk.getNumber());
             return;
         }
         if(offY < -chunk.getHeight()){
-//            System.out.println("Not drawing chunk: " + chunk.getNumber());
+
             return;
         }
         if(offX >= pixelW){
@@ -238,7 +233,6 @@ public class Renderer {
         if(offY >= pixelH){
             return;
         }
-//        System.out.println(offY + " " + camY);
 
 
         int newX = 0;
@@ -250,18 +244,10 @@ public class Renderer {
         // TODO: OPTIMIZE the upper boundary of the drawing.
         //  Currently adds to array even the parts that arent seen.
         if (offX < 0){
-//            System.out.println("here");
             newX = camX%pixelW;}
         if (offY < 0){ newY = newY; }
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
-
-//        int rendX = camX;
-//        int rendY = camY - chunk.getPosY();
-//        int rendFinX = chunk.getWidth() + chunk.getPosX();
-//        int rendFinY = chunk.getHeight() + chunk.getPosY();
-
-
 
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
@@ -269,9 +255,6 @@ public class Renderer {
 //                setLightBlock(x + offX, y + offY, image.getLightBlock());
             }
         }
-//        System.out.println("Here: " + newY + " " + newHeight + " " + chunk.getNumber());
-//        System.out.println("PosY " + camY);
-        // TODO: Reduce rendering on Y axis.
     }
 
     /**
@@ -312,24 +295,17 @@ public class Renderer {
         setPixel(centerx, centery+1, 0xff0000ff);
 
         int newWidth = Math.max(image.getTileW(), image.getTileH()) + Math.max(image.getTileW()/2, image.getTileH()/2);
-//        int newHeight = Math.max(image.getTileW(), image.getTileH()) + image.getTileH()/2;
         int newHeight = newWidth;
-
-//        int newWidth = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
-//        int newHeight = (int) Math.sqrt(Math.pow(image.getTileW()/2, 2) + Math.pow(image.getTileH()/2,2))*2;
 
         int newX = centerx - Math.max(newWidth, newHeight)/2;
         int newY = centery - Math.max(newWidth, newHeight)/2;
 
-
-//        drawRect(newX+offX, newY + offY, newWidth, newHeight, 0xff000000);
 
         // Clipping code
         if (offX < 0){ newX -= newX; }
         if (offY < 0){ newY -= newY; }
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
-//        newX = newX-60;
 
         for(int y = newY; y < newHeight; y++){
             for(int x = newX; x < newWidth; x++){
@@ -472,14 +448,6 @@ public class Renderer {
         if(newWidth + offX > pixelW){ newWidth -= newWidth + offX - pixelW;}
         if(newHeight + offY > pixelH){ newHeight -= newHeight + offY - pixelH;}
 
-//        int x = 0;
-//        int y = 0;
-//        for(int theta = 0; theta < 360; theta += 15){
-//            x = (int) (offX + radius*Math.cos(Math.toRadians(theta)));
-//            y = (int) (offY + radius*Math.sin(Math.toRadians(theta)));
-//            setPixel(x, y, color);
-//        }
-
         for (int x = -radius; x < radius ; x++)
         {
             int height = (int)Math.sqrt(radius * radius - x * x);
@@ -487,12 +455,6 @@ public class Renderer {
             for (int y = -height; y < height; y++)
                 setPixel(x + offX, y + offY, color);
         }
-
-//        for(int y = 0; y < height; y++){
-//            for(int x = 0; x < width; x++){
-//                setPixel(x+offX, y+offY, color);
-//            }
-//        }
     }
 
     /**

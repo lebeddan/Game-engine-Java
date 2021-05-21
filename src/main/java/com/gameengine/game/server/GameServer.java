@@ -118,8 +118,6 @@ public class GameServer extends Thread
 
     private void handleBullet(Packet03Bullet packet){
         if(getPlayerMP(packet.getUsername()) != null){
-//            System.out.println((packet).getUsername() + " has shot a bullet!");
-//            int index = getPlayerMPIndex(packet.getUsername());
             packet.writeData(this);
         }
     }

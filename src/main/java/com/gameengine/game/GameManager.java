@@ -54,26 +54,18 @@ public class GameManager extends AbstractGame {
     private GameContainer gc;
 
     public GameManager() throws IOException {
-//        startGame();
     }
 
     public void startGame(Stage stage, String username, boolean server) throws IOException {
         gc = new GameContainer(this);
 
-        //TODO: FIX STUFF WITH CAMERA
         gc.setWidth(1280);
         gc.setHeight(720);
         gc.setScale(1);
         gc.start();
         Scene gameScene = gc.getWindow().getMainScene();
-//        Stage gameStage = new Stage();
-//        gameStage.setScene(gameScene);
-//        stage.hide();
         stage.setScene(gc.getWindow().getMainScene());
 
-//        System.out.println("Do you want to start a server?");
-//        Scanner scanner = new Scanner(System.in);
-//        String msg = scanner.nextLine();
         if(server){
             socketServer = new GameServer(this);
             socketServer.start();
@@ -84,8 +76,6 @@ public class GameManager extends AbstractGame {
 
         loadLevel("/Users/SamSeppi/Desktop/IdeaProjects/TestEngine/src/main/resources/Maps/maptilesettest.json");
 
-//        System.out.println("Your username: ");
-//        username = scanner.nextLine();
         this.username = username;
         player = new PlayerMP(5, 5, username, gc.getInput(), null, -1);
         Packet00Login loginPacket = new Packet00Login(username, player.getPosX(), player.getPosY());
@@ -97,14 +87,11 @@ public class GameManager extends AbstractGame {
         loginPacket.writeData(socketClient);
 
         camera = new Camera(username);
-//        stage.hide();
         stage.show();
-//        gameStage.show();
     }
 
     @Override
     public void stop(){
-//        System.out.println("Hi");
         logger.info("Come back soon! Bye!");
 
         if(socketClient != null) {
@@ -122,10 +109,10 @@ public class GameManager extends AbstractGame {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Tank Souls");
-//        gc.getRenderer().setAmbientColor(-1);
-////        ViewManager manager = new ViewManager(this, stage);
-////        stage = manager.getMainStage();
-//        stage.setScene(gc.getWindow().getMainScene());
+        gc.getRenderer().setAmbientColor(-1);
+        ViewManager manager = new ViewManager(this, stage);
+        stage = manager.getMainStage();
+        stage.setScene(gc.getWindow().getMainScene());
         startGame(stage, "vas", true);
         stage.show();
     }
@@ -175,18 +162,10 @@ public class GameManager extends AbstractGame {
                         if(j + i*levelWChunks < map.getChunk_height()*levelWChunks){
                             loaded_chunks.add(map.get_chunk(j + i*levelWChunks));
                         }
-//                        System.out.println("Chunk to load: " + i + " " + j);
                     }
                 }
             }
-            System.out.println("-----------");
-
-//            System.out.println(loaded_chunks.toArray().length + " " + cur_chunk);
         }
-//        if(cur_pos != cur_chunk){
-//            loaded_chunks.add(map.get_chunk(cur_chunk++));
-//            System.out.println(cur_chunk);
-//        }
         for(int i = 0; i < getObjects().size(); i++){
             getObjects().get(i).update(gc, this, deltaTime);
             if(getObjects().get(i).isDead()){
@@ -210,29 +189,9 @@ public class GameManager extends AbstractGame {
 
     @Override
     public void render(GameContainer gc, Renderer r) {
-        // TODO: Update the boundaries in all of the drawing methods.
-        //  OPTIMIZE the upper boundary of the drawing.
-        //  Currently adds to array even the parts that arent seen.
-        //  The entities are loading incorrectly. Or chunks.
-
-
         camera.render(r);
-
-//        r.drawImage(skyImage, 0, 0);
-//        r.drawImage(tileImage, 0, 0);
-
-//        for (int i = 0; i < loaded_chunks.size(); i++){
-//            Chunk curCh = map.get_chunk(i);
-//            r.drawChunk(curCh, (int)(i%2)*curCh.getWidth(), (int)(i/2)*curCh.getHeight());
-//        }
-
-//        printgetObjects()ize(map.get_chunk(cur_chunk));
-//        System.out.println(getObjects()izeCalculator);
-//        r.drawChunk(map.get_chunk(cur_chunk), map.get_chunk(cur_chunk).getPosX(), map.get_chunk(cur_chunk).getPosY());
-//        System.out.println("Chunks loaded: " + loaded_chunks.toArray().length);
         for(int i = 0; i < loaded_chunks.toArray().length; i++){
             Chunk chnk = loaded_chunks.get(i);
-//            System.out.println(loaded_chunks.toArray().length);
             r.drawChunk(chnk, chnk.getPosX(), chnk.getPosY());
         }
 
@@ -300,7 +259,6 @@ public class GameManager extends AbstractGame {
             }
             for (GameObject obj : arr){
                 if(obj.getShape().equals("square")) {
-//                    Point2D center = Point2D.ZERO.add(mainObj.getPosX()+ mainObj.getRadius(), mainObj.getPosY()+ mainObj.getRadius());
                     Point2D center = Point2D.ZERO.add(mainObj.getCenter().getX() + mainObj.getPosX(), mainObj.getCenter().getY() + mainObj.getPosY());
                     int sqHalfX = obj.getWidth()/2;
                     int sqHalfY = obj.getHeight()/2;
@@ -313,8 +271,6 @@ public class GameManager extends AbstractGame {
                     int diffClampX = clamp(diffX, -sqHalfX, sqHalfX);
                     int diffClampY = clamp(diffY, -sqHalfY, sqHalfY);
 
-//                    int closeX = sqHalfX + diffClampX;
-//                    int closeY = sqHalfY + diffClampY;
                     Point2D closest = Point2D.ZERO.add(aabb.getX() + diffClampX, aabb.getY() + diffClampY);
 
                     if(closest.distance(center) < mainObj.getRadius()){
@@ -334,9 +290,7 @@ public class GameManager extends AbstractGame {
                     boolean collisionY = (mainObj.getPosY() + mainObj.getHeight() >= obj.getPosY()) && (obj.getPosY() + obj.getHeight() >= mainObj.getPosY());
 
                     if (collisionX && collisionY) {
-//                        System.out.println("Nice");
                         logger.info("Find collision");
-//                        mainObj.dead = true;
                         mainObj.hit(obj);
                         obj.hit(mainObj);
                     }
@@ -366,7 +320,6 @@ public class GameManager extends AbstractGame {
 
                     if (collisionX && collisionY) {
                         logger.info("Find collision");
-//                        mainObj.dead = true;
                         mainObj.hit(obj);
                         obj.hit(mainObj);
                     }

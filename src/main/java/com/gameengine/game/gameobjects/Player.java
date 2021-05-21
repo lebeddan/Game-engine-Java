@@ -260,8 +260,6 @@ public class Player extends GameObject{
             }
 
             mousePosRot = (float)Math.toDegrees(Math.atan2(mousePosY - gunAxis.getY(), mousePosX - gunAxis.getX()));
-            //        muzzleAxis = zeroPos.add((gunAxis.getX()+ gunSprite.getTileH()/2)*Math.cos(Math.toRadians(mousePosRot)),
-            //                (gunAxis.getY())*Math.sin(Math.toRadians(mousePosRot)));
             /**
              * Mouse position for rotate gun and shooting end.
              */
@@ -313,13 +311,6 @@ public class Player extends GameObject{
          */
 
         gm.check_collisions(this);
-
-//        Point2D playerPos = gm.check_radius(this, detection_radius);
-//        if(playerPos != null){
-//            enemy_goes_to_Player(playerPos);
-//            enemy_shoots_player(playerPos);
-//
-//        }
 
         // Send move packet
         if(isMoving || isMRotating || isRotating){

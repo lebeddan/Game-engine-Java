@@ -28,12 +28,10 @@ public class Camera {
 
         offX = targetX;
         offY = targetY;
-        //offX -= dt * (int)(offX - targetX) * 20;
-        //offY -= dt * (int)(offY - targetY) * 20;
 
         if(offX < 0) offX = 0;
         if(offY < 0) offY = 0;
-//        System.out.println(offY);
+
         if(offX  + gc.getWidth() > gm.getLevelW()){
             offX = gm.getLevelW() - gc.getWidth();
         }
