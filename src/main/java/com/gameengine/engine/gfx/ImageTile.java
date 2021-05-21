@@ -24,41 +24,6 @@ public class ImageTile extends Image{
         this.tileW = tileW*(int)scale;
         this.tileH = tileH*(int)scale;
         this.scale = scale;
-//        for (int y = tileH; y < this.tileH; y++){
-//            for(int x = tileW; x < this.tileW; x++){
-//                scaledArray[x+y*this.tileW] = pix[a+b*tileH];
-//                a++;
-//            }
-//            b++;
-//        }
-//        for (int i = 0; i < tileW/(int)scale; ++i) {
-//            for (int j = 0; j < tileH/(int)scale; ++j) {
-//                scaledArray[(i*2)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[((i*2) + 1)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[(i*2)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[((i*2) + 1)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
-//            }
-//        }
-//        this.setPixels(resizePixels(super.getPixels(), getWidth(), getHeight(), getWidth()*(int)scale, getHeight()*(int)scale));
-//        this.setPixels(scaledArray);
-//        for(int x = 0; x < tileW; x++) {
-//            for (int y = 0; y < this.getHeight(); y++) {
-//                double centerX = tileW / 2;
-//                double centerY = this.getHeight() / 2;
-//
-//                double dx = (double) (x - centerX);
-//                double dy = (double) (y - centerY);
-//
-//                double finX = Math.cos(Math.toRadians(90)) * dx - Math.sin(Math.toRadians(90)) * dy + centerX;
-//                double finY = Math.cos(Math.toRadians(90)) * dy + Math.sin(Math.toRadians(90)) * dx + centerY;
-//
-//                finX = Math.round(finX);
-//                finY = Math.round(finY);
-//
-////                System.out.println(" " + (Math.sin(Math.toRadians(30)) * dx + centerY));
-//                pixelsRot[x + y * this.getWidth()] = this.getPixels()[(int) (finX + finY * tileW)];
-//            }
-//        }
     }
 
     public ImageTile(String path, int tileW, int tileH) throws IOException {
@@ -66,34 +31,6 @@ public class ImageTile extends Image{
         this.tileW = tileW;
         this.tileH = tileH;
         this.scale = scale;
-//        for (int i = 0; i < tileW/(int)scale; ++i) {
-//            for (int j = 0; j < tileH/(int)scale; ++j) {
-//                scaledArray[(i*2)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[((i*2) + 1)+(j*2)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[(i*2)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
-//                scaledArray[((i*2) + 1)+((j*2) + 1)*tileW] = pix[i+j*tileW/(int)scale];
-//            }
-//        }
-//        this.setPixels(resizePixels(super.getPixels(), getWidth(), getHeight(), getWidth()*(int)scale, getHeight()*(int)scale));
-//        this.setPixels(scaledArray);
-//        for(int x = 0; x < tileW; x++) {
-//            for (int y = 0; y < this.getHeight(); y++) {
-//                double centerX = tileW / 2;
-//                double centerY = this.getHeight() / 2;
-//
-//                double dx = (double) (x - centerX);
-//                double dy = (double) (y - centerY);
-//
-//                double finX = Math.cos(Math.toRadians(90)) * dx - Math.sin(Math.toRadians(90)) * dy + centerX;
-//                double finY = Math.cos(Math.toRadians(90)) * dy + Math.sin(Math.toRadians(90)) * dx + centerY;
-//
-//                finX = Math.round(finX);
-//                finY = Math.round(finY);
-//
-////                System.out.println(" " + (Math.sin(Math.toRadians(30)) * dx + centerY));
-//                pixelsRot[x + y * this.getWidth()] = this.getPixels()[(int) (finX + finY * tileW)];
-//            }
-//        }
     }
 
     /*
