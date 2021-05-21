@@ -18,6 +18,62 @@ public class Player extends GameObject{
      * TODO: Add some powerup's.
      */
 
+    public String getPathTankImage() {
+        return pathTankImage;
+    }
+
+    public String getPathGunImage() {
+        return pathGunImage;
+    }
+
+    public String getPathToBullet() {
+        return pathToBullet;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public int getAnimation() {
+        return animation;
+    }
+
+    public float getOffX() {
+        return offX;
+    }
+
+    public float getOffY() {
+        return offY;
+    }
+
+    public float getLastMPos() {
+        return lastMPos;
+    }
+
+    public float getLastRot() {
+        return lastRot;
+    }
+
+    public float getMaxSpeed() {
+        return MaxSpeed;
+    }
+
+    public float getDrag() {
+        return drag;
+    }
+
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    public boolean isMRotating() {
+        return isMRotating;
+    }
+
+    public boolean isRotating() {
+        return isRotating;
+    }
+
     /**
      * Path to sprites.
      */
@@ -104,7 +160,19 @@ public class Player extends GameObject{
         angularDrag = (float)0.9;
         drag = (float)0.9;
         MaxSpeed = 50;
+    }
 
+    public Player(int posX, int posY, String username){
+        this.username = username;
+        this.shape = "circle";
+        this.tag = username;
+        this.tileX = posX;
+        this.tileY = posY;
+        this.rotation = 0;
+        this.offX = 0;
+        this.offY = 0;
+        this.posX = posX*32;
+        this.posY = posY*32;
     }
 
 
