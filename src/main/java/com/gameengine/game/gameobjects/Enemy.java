@@ -1,8 +1,10 @@
 package com.gameengine.game.gameobjects;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
+import com.gameengine.game.gameobjects.Multiplayer.PlayerMP;
 import com.gameengine.game.gameobjects.world.Tree;
 import com.gameengine.game.gameobjects.world.Wall;
 import javafx.geometry.Point2D;
@@ -11,6 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Enemy object
+ * Patrols around 4 points or goes to player
+ */
 public class Enemy extends GameObject{
     /**
      * Paths to sprites.
@@ -20,6 +26,9 @@ public class Enemy extends GameObject{
     private String pathEnemyBullet = "/Tile/magicball.png";
     private ImageTile hitSprite = new ImageTile("/Tile/hit_effect.png", 32, 32, 3);
     private ImageTile deathSprite = new ImageTile("/Tile/explosion.png", 64, 64, 2);
+    private SoundClip fireSound = new SoundClip("/Sounds/zapSound.mp3", "clip");
+    private SoundClip hitSound = new SoundClip("/Sounds/hitSound.mp3", "clip");
+    private SoundClip explosionSound = new SoundClip("/Sounds/explosionSound.mp3", "clip");
 
     /**
      * Parameters for rotation and animation of sprites.
@@ -38,38 +47,20 @@ public class Enemy extends GameObject{
      * Position of enemy.
      */
     private float offX, offY;
-    private int tileX, tileY; // position X, Y
     /**
      * Enemy properties.
      */
-    private float drag; // the rotation of the car, in radians
-    private float angularVelocity; // speed the car is spinning, in radians
-    private float angularDrag; //  how fast the car stops spinning
-    private float power; // how fast car can accelerate
-    private int turnspeed;// how fast to turn
 
     /**
      * Auxiliary parameters.
      */
-    private String Direction;
-    private String[] Movement;
     private float speed;
     private float rotation;
-    private double moveCoolDownTime;
-    private double movedTime;
-    private float gunPos;
-    private float moveAngle;
     private long lastShootTime;
     private int ammoMax;
     private int radiusDetection;
     private float angle_now;
-    private float Xmin,Xmax,Ymin,Ymax;
-    private float Xrand, Yrand;
-    private Point2D v1, v2,v3,v4;
-    private int num;
-    private double den, cos;
-    private GameManager gm;
-    private int hp = 3;
+    private int hp = 6;
     private float animX, animY = 0;
     private float hit_animX, hit_animY = 0;
     private boolean hit_anim = false;
@@ -87,14 +78,15 @@ public class Enemy extends GameObject{
      * @throws IOException
      */
     public Enemy(int posX, int posY, GameManager gm) throws IOException {
-        this.gm = gm;
+        fireSound.setVolume(0.4);
+        hitSound.setVolume(0.4);
+
         enemySprite = new ImageTile(pathEnemyImage, 32, 32, 3);
         enemygunSprite = new ImageTile(pathEnemyGunImage, 32, 32, 3);
         bulletSprite = new ImageTile(pathEnemyBullet, 32,32, 2);
+
         this.shape = "circle";
         this.tag = "enemy";
-        this.tileX = posX;
-        this.tileY = posY;
         this.rotation = 0;
         this.offX = 0;
         this.offY = 0;
@@ -108,18 +100,10 @@ public class Enemy extends GameObject{
         gunAxis = zeroPos.add((enemygunSprite.getTileW()/2), 24*3);
         centerPoint = tankAxis;
         speed = 5;
-        moveCoolDownTime=.9*1000;
-        movedTime = 0;
-        moveAngle = 0;
         ammoMax = 1000000;
         lastShootTime = 0;
         radius = (width-15)/2;
         radiusDetection = 7*(width-15)/2;
-        System.out.println("COS " +angle_now);
-        turnspeed = 3;
-        power = 3;
-        angularDrag = (float)0.9;
-        drag = (float)0.15;
         rotation = 0;
         angle_now = 0;
 
@@ -132,18 +116,15 @@ public class Enemy extends GameObject{
 
     @Override
     public void update(GameContainer gc, GameManager gm, float dt) {
-//        System.out.println("posX: " + posX + " posY: " + posY);
+
         /**
          * Movement of enemy starts.
          */
+        // Go to point if not following player
         Point2D point2go = patrolPoints.get(curPoint);
-        double currentTime=System.currentTimeMillis();
-//        if ((currentTime-movedTime)>=moveCoolDownTime) {
         if(!followingPlayer) {
             if (Point2D.ZERO.add(tankAxis.getX() + posX, tankAxis.getY() + posY).distance(point2go) > 10) {
-//                System.out.println(posX +" "+point2go.getX() +" bb "+posY+" "+point2go.getY());
                 enemy_goes_to_point(point2go, dt);
-                movedTime = currentTime;
                 angle_now = rotation;
             } else {
                 curPoint++;
@@ -152,7 +133,6 @@ public class Enemy extends GameObject{
                 }
             }
         }
-//        }
         /**
          * Movement of enemy ends.
          */
@@ -160,7 +140,6 @@ public class Enemy extends GameObject{
         /**
          * Update animation and speed of enemy start.
          */
-
         Point2D enemy = gm.check_radius(this);
         if(enemy != null){
             enemy_goes_to_point(enemy, dt);
@@ -176,18 +155,6 @@ public class Enemy extends GameObject{
 
         offX = 0;
         offY = 0;
-
-//        if (offX > 0){
-//            offX -= drag;
-//        }else if(offY > 0){
-//            offY -= drag;
-//        }
-//
-//        if (offX < 0){
-//            offX += 2*power;
-//        }else if(offY < 0){
-//            offY += 2*power;
-//        }
 
         if(animation > 2){
             animation = 0;
@@ -216,31 +183,6 @@ public class Enemy extends GameObject{
                 offY += (float) Math.sin(Math.toRadians(angle)) * dt * speed * ((float) tankAxis.getY() / 2);
             }
         }
-//        System.out.println("Rot: "+rotation + " "+angle);
-
-//        if(playerPos.getY() > tankAxis.getY()){
-//            offY += (float) Math.sin(Math.toRadians() * ((float) tankAxis.getY()/2))*speed;
-//            if (playerPos.getY() == tankAxis.getY())
-//                offY = 0;
-//        }
-
-//        if (offX > 0){
-//            offX -= speed;
-//        }else if(offY > 0){
-//            offY -= speed;
-//        }
-//
-//        if (offX < 0){
-//            offX += power*dt;
-//        }else if(offY < 0){
-//            offY += power*dt;
-//        }
-//
-//        if (gunPos <= angle){
-//            gunPos += 5;
-//        }else{
-//            gunPos -=5;
-//        }
     }
 
     /**
@@ -249,16 +191,12 @@ public class Enemy extends GameObject{
      * @param gm - a GameManager needs for fireBullet().
      */
     public void enemy_shoots_player(Point2D playerPos, GameManager gm){
-        if (ammoMax > 0 && System.currentTimeMillis() - lastShootTime >= 300) {
+        if (ammoMax > 0 && System.currentTimeMillis() - lastShootTime >= 500) {
             float angle = ((float)Math.toDegrees(Math.atan2(playerPos.getY() - (posY+tankAxis.getY()), playerPos.getX() - (posX+tankAxis.getX()))));
             angle_now = angle+90;
             fireBullet(gm, angle);
-//            System.out.println(angle +" "+ playerPos.getX()+" "+playerPos.getY());
-//            Packet03Bullet packet = new Packet03Bullet(this.tag, posX, posY, rotation);
-//            packet.writeData(gm.socketClient);
             lastShootTime = System.currentTimeMillis();
             ammoMax--;
-            System.out.println("Ammo: " + ammoMax);
         }
     }
 
@@ -280,33 +218,31 @@ public class Enemy extends GameObject{
             r.drawImageTile(enemySprite, (int) posX, (int) posY, 0, 0, rotation, tankAxis);
             r.drawImageTile(enemygunSprite, (int) (posX + tankAxis.getX() - enemygunSprite.getTileW() / 2), (int) ((int) posY - 2),
                     (int) 0, 0, angle_now, gunAxis);
-            r.drawFillCirc((int) (posX + centerPoint.getX()), (int) (posY + centerPoint.getY()), radiusDetection, 0x99ff0000);
         }
         if(hit_anim){
+            hitSound.play();
             hit_animation(r);
         }
-//        r.drawFillRect(0,0, 100, 100, 0x80ff0000);
     }
 
     @Override
     public void hit(GameObject obj, GameManager gm) {
         if(obj.getClass() ==  Bullet.class){
             this.hp--;
+            System.out.println(hp);
             if(hp == 0){
                 deathAnimation = true;
             } else {
                 hit_anim = true;
             }
-        } else {
-            Point2D mainCent = Point2D.ZERO.add(obj.getPosX() + obj.getCenter().getX(), obj.getPosY() + obj.getCenter().getY());
-            enemy_shoots_player(mainCent, gm);
-            System.out.println("Enenym shoots at: " + mainCent.getX() + " " + mainCent.getY());
         }
-        if(followingPlayer){
+        else if(obj.getClass() ==  PlayerMP.class){
             posX -= offX*2;
             posY -= offY*2;
         }
-        if(obj instanceof Wall || obj instanceof Tree) {
+        else if(obj instanceof Wall || obj instanceof Tree) {
+            Point2D mainCent = Point2D.ZERO.add(obj.getPosX() + obj.getCenter().getX(), obj.getPosY() + obj.getCenter().getY());
+            enemy_shoots_player(mainCent, gm);
             posX -= offX * 3;
             posY -= offY * 3;
             offX = 0;
@@ -334,6 +270,7 @@ public class Enemy extends GameObject{
             animX = 0;
             animY += 1;
             if(animY > 2){
+                explosionSound.play();
                 animY = 0;
                 this.dead = true;
             }
@@ -350,6 +287,7 @@ public class Enemy extends GameObject{
      */
     public void fireBullet(GameManager gm, float angle){
         gm.addObject(new Bullet(angle, posX + (int) tankAxis.getX(), posY + (int) tankAxis.getY(), tag, bulletSprite));
+        fireSound.play();
     }
 
 

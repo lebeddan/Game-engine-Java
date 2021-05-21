@@ -6,11 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Map {
     private List<Integer> data;
@@ -34,13 +36,7 @@ public class Map {
     private List<Integer> objects;
     private ImageTile tileSet;
 
-    {
-        try {
-            tileSet = new ImageTile("/Tile/myspritesheet.png", 16, 16,tile_size/16);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private Logger logger;
 
     Type listType = new TypeToken<List<Integer>>() {}.getType();
     public Map(){
@@ -49,13 +45,17 @@ public class Map {
 
     public Map(JsonElement list, JsonElement jse, GameManager gm){
         this.gm = gm;
-//        Gson gson = new Gson();
+        logger = Logger.getLogger(String.valueOf(GameManager.class));
+        try {
+            tileSet = new ImageTile("/Tile/myspritesheet.png", 16, 16,tile_size/16);
+        } catch (IOException e) {
+            logger.severe("Cannot load tileset!");
+            Platform.exit();
+        }
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Map.class, new MapAdapter());
         builder.setPrettyPrinting();
         Gson gson = builder.create();
-//        System.out.println(gson.fromJson(list, Map.class).x);
-        System.out.println(list);
         Map mp = gson.fromJson(list.toString(), Map.class);
         chunks = new ArrayList<Chunk>(chunk_width*chunk_height);
         this.data = mp.data;
@@ -69,8 +69,6 @@ public class Map {
         this.x = mp.x;
         this.y = mp.y;
         setObjects(jse);
-//        System.out.println("HIII");
-        System.out.println(chunk_width);
         fill_chunks();
     }
 
@@ -84,7 +82,6 @@ public class Map {
     }
 
     private void fill_chunks(){
-        System.out.println("CHunk filled called");
         int cTileX = width/chunk_width;
         int cTileY = height/chunk_height;
         int[] chunk_tiles = new int[chunk_width * chunk_height];

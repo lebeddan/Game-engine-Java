@@ -2,6 +2,7 @@ package com.gameengine.game.gameobjects.world;
 
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import com.gameengine.game.gameobjects.GameObject;
@@ -15,6 +16,8 @@ public class Tree extends GameObject {
     private ImageTile treeSprite = new ImageTile("/Tile/myspritesheet.png", 32, 32, 4);
     private ImageTile hitSprite = new ImageTile("/Tile/hit_effect.png", 32, 32, 3);
     private ImageTile deathSprite = new ImageTile("/Tile/explosion.png", 64, 64, 2);
+    private SoundClip hitSound = new SoundClip("/Sounds/hitSound.mp3", "clip");
+    private SoundClip explosionSound = new SoundClip("/Sounds/explosionSound.mp3", "clip");
     private int hp = 3;
     private float animX, animY = 0;
     private float hit_animX, hit_animY = 0;
@@ -44,9 +47,7 @@ public class Tree extends GameObject {
                 death_animation(r);
             }
         } else {
-//        r.drawFillRect((int) posX, (int) posY,width,height,0x99ff0000);
             r.drawImageTile(treeSprite, (int) posX, (int) posY, 1, 0, 0);
-//        r.drawFillCirc((int) (posX+centerPoint.getX()), (int) (posY+centerPoint.getY()), radius,0x99ff0000);
         }
         if(hit_anim){
             hit_animation(r);
@@ -56,6 +57,7 @@ public class Tree extends GameObject {
     @Override
     public void hit(GameObject obj, GameManager gm) {
         if(obj.getClass() == Bullet.class){
+            hitSound.play();
             bullet_hit();
         }
     }
@@ -68,6 +70,7 @@ public class Tree extends GameObject {
     public void bullet_hit(){
         hp--;
         if(hp == 0){
+            explosionSound.play();
             deathAnimation = true;
         } else {
             hit_anim = true;

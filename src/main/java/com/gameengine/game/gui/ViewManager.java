@@ -62,29 +62,15 @@ public class ViewManager {
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         menuButton = new ArrayList<>();
-//        mainStage.initStyle(StageStyle.UNDECORATED);
-
-//        Media sound = new Media("C:\\Users\\Vasily\\IdeaProjects\\TestEngine\\src\\main\\resources\\Sounds\\gameOver.wav");
-//        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-//        System.out.println(this.getClass().getResource("/Sounds/gameBGmusic.mp3").toExternalForm());
-
-//        File f = new File("src/main/resources/Sounds/gameOver.wav");
-
-//        System.out.println(f.toURI().toString());
         clip.loop();
         clip.setVolume(0.5);
         clip.play();
-
-//        bgMusic.play();
 
         mainStage.setScene(mainScene);
         createLogo();
         createBackground();
         createSubScenes();
         createButtons();
-//        bgMusic.loop();
-//        bgMusic.play();
-//        mainStage.hide();
     }
 
     private void createButtons(){
@@ -147,17 +133,14 @@ public class ViewManager {
     private void showSubScene(MenuSubScene subscene){
         if(sceneToHide != null) {
             if (sceneToHide == subscene) {
-                System.out.println("tady");
                 sceneToHide.removeSubScene();
                 sceneToHide = null;
             } else {
-                System.out.println("Here");
                 sceneToHide.removeSubScene();
                 subscene.moveSubScene();
                 sceneToHide = subscene;
             }
         } else {
-            System.out.println("THis");
             subscene.moveSubScene();
             sceneToHide = subscene;
         }
@@ -378,7 +361,6 @@ public class ViewManager {
     }
 
     private void createBackground() throws MalformedURLException {
-//        Image backgroundImage = new Image(f.toURI().toString(), 1280, 720, false, true);
         Image backgroundImage = new Image("/GUI/bg.png");
 
         BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.REPEAT,
@@ -387,8 +369,6 @@ public class ViewManager {
         BackgroundFill myBF = new BackgroundFill(Color.BLUEVIOLET, new CornerRadii(1),
                 new Insets(0.0,0.0,0.0,0.0));// or null for the padding
         mainPane.setBackground(new Background(background));
-//        mainPane.getChildren().add(new ImageView(new Image(getClass().getResourceAsStream("/Resources/GUI/scenePixe"))));
-        System.out.println(background.getImage().getWidth());
     }
 
     private void createLogo(){
@@ -421,7 +401,6 @@ public class ViewManager {
     }
 
     private void startTheGame(String username, boolean server, String IP) throws IOException {
-//        mainStage.hide();
         mainStage.hide();
         gm.startGame(gameStage, username, server, IP);
     }

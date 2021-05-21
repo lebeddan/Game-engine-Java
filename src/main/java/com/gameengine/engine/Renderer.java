@@ -65,9 +65,9 @@ public class Renderer {
 
             @Override
             public int compare(ImageRequest o1, ImageRequest o2) {
-                if(o1.zDepth < o2.zDepth)
+                if(o1.getzDepth() < o2.getzDepth())
                     return -1;
-                if(o1.zDepth> o2.zDepth)
+                if(o1.getzDepth()> o2.getzDepth())
                     return 1;
                 return 0;
             }
@@ -75,9 +75,9 @@ public class Renderer {
 
         for(int i = 0; i < imageRequest.size(); i++){
             ImageRequest ir = imageRequest.get(i);
-            setzDepth(ir.zDepth);
+            setzDepth(ir.getzDepth());
 //            ir.image.setAlpha(false);
-            drawImage(ir.image, ir.offX, ir.offY);
+            drawImage(ir.getImage(), ir.getOffX(), ir.getOffY());
         }
 
 //        for(int i =0; i < lightRequest.size(); i++){

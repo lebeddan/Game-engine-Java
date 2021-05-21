@@ -2,6 +2,7 @@ package com.gameengine.game.gameobjects.world;
 
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
+import com.gameengine.engine.audio.SoundClip;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import com.gameengine.game.gameobjects.Bullet;
@@ -15,9 +16,9 @@ public class Wall extends GameObject {
     private ImageTile wallSprite = new ImageTile("/Tile/myspritesheet.png", 16, 16, 4);
     private ImageTile hitSprite = new ImageTile("/Tile/hit_effect.png", 32, 32, 3);
     private ImageTile deathSprite = new ImageTile("/Tile/explosion.png", 64, 64, 2);
+    private SoundClip hitSound = new SoundClip("/Sounds/hitSound.mp3", "clip");
+    private SoundClip explosionSound = new SoundClip("/Sounds/explosionSound.mp3", "clip");
     private int hp = 3;
-    private int death_frames = 30;
-    private int hit_frames = 5;
     private Point2D centerPoint;
     private float animX, animY = 0;
     private int oldPosX, oldPosY;
@@ -83,7 +84,6 @@ public class Wall extends GameObject {
             }
         } else {
             r.drawImageTile(wallSprite, oldPosX, oldPosY, number % imTWidth, number / imTWidth, 0);
-//        r.drawFillRect((int) posX, (int) posY,width,height,0x99ff0000);
         }
         if(hit_anim){
             hit_animation(r);
@@ -93,6 +93,7 @@ public class Wall extends GameObject {
     @Override
     public void hit(GameObject obj, GameManager gm) {
         if(obj.getClass() == Bullet.class){
+            hitSound.play();
             bullet_hit();
         }
     }
@@ -118,6 +119,7 @@ public class Wall extends GameObject {
     public void bullet_hit(){
         hp--;
         if(hp == 0){
+            explosionSound.play();
             deathAnimation = true;
         } else {
             hit_anim = true;
