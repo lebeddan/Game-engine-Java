@@ -5,8 +5,15 @@ import com.gameengine.engine.Renderer;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.GameManager;
 import javafx.geometry.Point2D;
+/**
+ * Bullet class. Game object which as a part of a game.
+ * @author Vasily Levitskiy
+ */
 
 public class Bullet extends GameObject {
+    /**
+     * Parametrs of bullet starts.
+     */
     private float offX, offY;
     private int tileX,tileY;
 
@@ -20,7 +27,18 @@ public class Bullet extends GameObject {
     private Point2D posToDraw = Point2D.ZERO;
     private Point2D centerPoint;
     private String username;
+    /**
+     * Parametrs of bullet ends.
+     */
 
+    /**
+     * A public constructor for creating a bullet object.
+     * @param direction - the direction where the bullet goes
+     * @param offX - offset X axis of bullet
+     * @param offY - offset Y axis of bullet
+     * @param username - from whom does the bullet fly
+     * @param bSprite - bullet sprite
+     */
     public Bullet(float direction, float offX, float offY, String username, ImageTile bSprite){
         this.username = username;
         this.bulletSprite = bSprite;

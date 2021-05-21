@@ -3,13 +3,26 @@ package com.gameengine.game.server.packets;
 import com.gameengine.engine.gfx.ImageTile;
 import com.gameengine.game.server.GameClient;
 import com.gameengine.game.server.GameServer;
-
+/**
+ * Packet00Bullet class extend Packet. Class used for send information when user shoot
+ * and position of bullet.
+ * @author Vasily Levitskiy
+ */
 public class Packet03Bullet extends Packet{
-
+    /**
+     * Parametrs for packet bullet starts.
+     */
     private String username;
     private float x, y, rotation;
     private ImageTile bSprite;
+    /**
+     * Parametrs for packet bullet ends.
+     */
 
+    /**
+     * A public constructor for get info about position of bullet.
+     * @param data
+     */
     public Packet03Bullet(byte[] data){
         super(03);
         String[] dataArray = readData(data).split(",");
@@ -19,6 +32,13 @@ public class Packet03Bullet extends Packet{
         this.rotation = Float.parseFloat(dataArray[3]);
     }
 
+    /**
+     * A public constructor for set info about user and position of bullet
+     * @param username - name of shooter user
+     * @param x - position of shooter user on X axis
+     * @param y - position of shooter user on Y axis
+     * @param rotation - rotation of the muzzle
+     */
     public Packet03Bullet(String username, float x, float y, float rotation){
         super(03);
         this.username = username;

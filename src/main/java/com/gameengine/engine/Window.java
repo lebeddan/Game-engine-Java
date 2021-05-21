@@ -21,6 +21,9 @@ import java.nio.IntBuffer;
  * @author Vasily Levitskiy
  */
 public class Window {
+    /*
+    Properties of window starts
+     */
     private WritableImage image;
     private PixelWriter pw;
 
@@ -38,7 +41,15 @@ public class Window {
 
     private IntBuffer intBuffer;
     private PixelBuffer<IntBuffer> pixelBuffer;
+     /*
+    Properties of window ends
+     */
 
+    /**
+     * A public constructor for creating window object.
+     * @param gc - the game container needed for getting width and height of window.
+     * @param canvas - the canvas that will be displayed in the window
+     */
     public Window(GameContainer gc, Canvas canvas){
         width = gc.getWidth();
         height = gc.getHeight();
@@ -68,14 +79,26 @@ public class Window {
         pw.setPixels(0,0,width,height,intArgbPreInstance,pixel,0,(int)gameCanvas.getWidth());
     }
 
+    /**
+     * A getter function that return a array of pixels
+     * @return integer array of pixels
+     */
     public int[] getPixel() {
         return pixel;
     }
 
+    /**
+     * A getter function that return the main scene
+     * @return Scene object
+     */
     public Scene getMainScene(){
         return mainScene;
     }
 
+    /**
+     * A getter function that return the game canvas
+     * @return Canvas object
+     */
     public Canvas getCanvas() {
         return gameCanvas;
     }

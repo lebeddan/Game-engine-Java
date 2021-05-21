@@ -9,10 +9,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
+/**
+ * Chunk class. Game object which loads up the pieces of the map when the player approaches them.
+ * @author Vasily Levitskiy
+ */
 public class Chunk {
     private static final Logger logger = Logger.getLogger(String.valueOf(Chunk.class));
 
+    /**
+     * Parametrs of chunk starts.
+     */
     private int width;
     private int height;
     private int pixel_foreground[];
@@ -24,8 +30,21 @@ public class Chunk {
     private int tileSize;
 
     private int posX, posY;
+    /**
+     * Parametrs of chunk ends.
+     */
 
-
+    /**
+     * A public costructor which add a game objects(Wall, Tree) and
+     * loads up the pieces of the map.
+     * @param width - a width of chunk
+     * @param height - a height of chunk
+     * @param tiles - a integer array of tiles
+     * @param objects_l - a integer array of objects
+     * @param chunk_num - a chunk number
+     * @param map - a map
+     * @param grasstileSprite - a sprite of chunk
+     */
     public Chunk(int width, int height, int[] tiles, int[] objects_l, int chunk_num, Map map, ImageTile grasstileSprite) {
         this.width = width;
         this.height = height;

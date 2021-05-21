@@ -11,10 +11,16 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
+/**
+ * Map class. Game object which loads the map.
+ * @author Vasily Levitskiy
+ */
 public class Map {
     private static final Logger logger = Logger.getLogger(String.valueOf(Map.class));
 
+    /**
+     * Parametrs of map starts.
+     */
     private List<Integer> data;
     private int height;
     private int id;
@@ -33,6 +39,9 @@ public class Map {
     private ArrayList<Chunk> chunks;
     private List<Integer> objects;
     private ImageTile tileSet;
+    /**
+     * Parametrs of map ends.
+     */
 
     {
         try {
@@ -44,6 +53,11 @@ public class Map {
 
     Type listType = new TypeToken<List<Integer>>() {}.getType();
 
+    /**
+     * A public costructor for creating a map object.
+     * @param list - list of maps.
+     * @param jse -
+     */
     public Map(JsonElement list, JsonElement jse){
         Gson gson = new Gson();
         Map mp = gson.fromJson(list, Map.class);
@@ -71,7 +85,6 @@ public class Map {
     public List<Integer> getData(){
         return data;
     }
-
     private void fill_chunks(){
         logger.info("Chunk filled called");
         int cTileX = width/chunk_width;

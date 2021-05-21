@@ -10,6 +10,9 @@ import javafx.scene.input.MouseEvent;
  * @author Vasily Levitskiy
  */
 public class Input{
+    /*
+   Properties of input starts
+    */
     private GameContainer gc;
 
     private final int NUM_KEYS = 256;
@@ -24,7 +27,14 @@ public class Input{
     private int scroll;
 
     private Scene mainScene;
+    /*
+   Properties of input ends
+    */
 
+    /**
+     * A public constructor for creating input object.
+     * @param gc - game container used for get window and main scene
+     */
     public Input(GameContainer gc){
         this.gc = gc;
         mainScene = gc.getWindow().getMainScene();
@@ -124,12 +134,21 @@ public class Input{
         buttons[mouseNumber(e)] = false;
     }
 
-
+    /**
+     * A public function for get X,Y axis of mouse,
+     * when user dragged something.
+     * @param e - mouse
+     */
     public void mouseDragged(MouseEvent e) {
         mouseX = (int)(e.getX() / gc.getScale());
         mouseY = (int)(e.getY() / gc.getScale());
     }
 
+    /**
+     * A public function for get X,Y axis of mouse,
+     * when user move mouse.
+     * @param e - mouse
+     */
     public void mouseMoved(MouseEvent e) {
         mouseX = (int)(e.getX() / gc.getScale());
         mouseY = (int)(e.getY() / gc.getScale());
@@ -147,6 +166,11 @@ public class Input{
         return scroll;
     }
 
+    /**
+     * A public function for get a key
+     * when user click on the button.
+     * @param e - mouse
+     */
     private int mouseNumber(MouseEvent e){
         if(e.isPrimaryButtonDown()){
             return 0;

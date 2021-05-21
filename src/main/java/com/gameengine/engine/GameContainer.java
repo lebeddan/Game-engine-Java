@@ -71,7 +71,6 @@ public class GameContainer implements Runnable{
         final long startNanoTime = System.nanoTime();
         final long[] lastNanoTime = {System.nanoTime()};
 
-
         final long[] frameTimes = new long[100];
         final int[] frameTimeIndex = {0};
         final boolean[] arrayFilled = {false};

@@ -3,17 +3,36 @@ package com.gameengine.game.gameobjects;
 import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
 import com.gameengine.game.GameManager;
-
+/**
+ * Camera class. Game object which follows the player and.
+ * @author Vasily Levitskiy
+ */
 public class Camera {
+    /**
+     * Parametrs of camera starts.
+     */
     private float offX, offY;
 
     private String targetTag;
     private GameObject target = null;
+    /**
+     * Parametrs of camera starts.
+     */
 
+    /**
+     * A public costructor for set object tracking
+     * @param tag - tag of game object
+     */
     public Camera(String tag){
         this.targetTag = tag;
     }
 
+    /**
+     * A public function for update a game scene
+     * @param gc - game container used for get width and height of window.
+     * @param gm - game manager used for get level width and level height of map.
+     * @param dt - frames
+     */
     public void update(GameContainer gc, GameManager gm, float dt){
         if(target == null){
             target = gm.getObject(targetTag);
@@ -40,6 +59,10 @@ public class Camera {
         }
     }
 
+    /**
+     * A public function for rendering position of camera
+     * @param r
+     */
     public void render(Renderer r){
         r.setCamX((int)offX);
         r.setCamY((int)offY);

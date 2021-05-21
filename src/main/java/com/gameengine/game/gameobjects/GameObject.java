@@ -4,7 +4,10 @@ import com.gameengine.engine.GameContainer;
 import com.gameengine.engine.Renderer;
 import com.gameengine.game.GameManager;
 import javafx.geometry.Point2D;
-
+/**
+ * The abstract class which defines the standard properties and methods of game objects.
+ * @author Lebedev Daniil
+ */
 public abstract class GameObject {
     protected String tag;
     protected float posX;

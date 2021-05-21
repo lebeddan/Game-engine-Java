@@ -9,9 +9,14 @@ import com.gameengine.game.gameobjects.GameObject;
 import javafx.geometry.Point2D;
 
 import java.io.IOException;
-
+/**
+ * Wall class. Game object which as a part of a game.
+ * @author Lebedev Daniil
+ */
 public class Wall extends GameObject {
-
+    /**
+     * Parametrs of wall starts.
+     */
     private ImageTile wallSprite = new ImageTile("src/Resources/Tile/myspritesheet.png", 16, 16, 4);
     private ImageTile hitSprite = new ImageTile("src/Resources/Tile/hit_effect.png", 32, 32, 3);
     private ImageTile deathSprite = new ImageTile("src/Resources/Tile/explosion.png", 64, 64, 2);
@@ -25,7 +30,17 @@ public class Wall extends GameObject {
     private boolean hit_anim = false;
     private int imTWidth;
     private int number;
+    /**
+     * Parametrs of wall ends.
+     */
 
+    /**
+     * A public constructor for creating a wall object.
+     * @param tag - a tag of wall
+     * @param posX - start position on X axis of wall
+     * @param posY - start position on Y axis of wall
+     * @throws IOException
+     */
     public Wall(String tag, int posX, int posY, int number) throws IOException {
         this.shape = "square";
         this.number = number;
@@ -102,6 +117,9 @@ public class Wall extends GameObject {
         return null;
     }
 
+    /**
+     * A public function for draw a hit animation
+     */
     private void hit_animation(Renderer r){
         r.drawImageTile(hitSprite, (int) oldPosX, (int) oldPosY, (int)hit_animX, (int)hit_animY, 0);
         hit_animX += 0.015 * 10;
@@ -115,6 +133,10 @@ public class Wall extends GameObject {
         }
     }
 
+    /**
+     * A public function for to lower the hp of a wall
+     * when a player or enemy shoots at it
+     */
     public void bullet_hit(){
         hp--;
         if(hp == 0){
@@ -124,6 +146,9 @@ public class Wall extends GameObject {
         }
     }
 
+    /**
+     * A public function for draw a death animation
+     */
     private void death_animation(Renderer r){
         r.drawImageTile(deathSprite, (int) oldPosX-width/2, (int) oldPosY-height/2, (int)animX, (int)animY, 0);
         animX += 0.015 * 10;
